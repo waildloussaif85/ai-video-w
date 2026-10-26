@@ -1,1 +1,308 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #050508;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 420px;
+    padding: 15px;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome-container {
+    text-align: center;
+    background: linear-gradient(145deg, #0f0c1b, #05020a);
+    padding: 40px 30px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+    width: 100%;
+}
+
+.clapperboard-icon {
+    width: 120px;
+    height: 100px;
+    background-color: #1a1924;
+    margin: 0 auto 30px auto;
+    border-radius: 8px;
+    border: 2px solid #3d3b54;
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+    overflow: hidden;
+}
+
+.clapper-top {
+    height: 25px;
+    background: repeating-linear-gradient(45deg, #2c2a3e, #2c2a3e 10px, #12111a 10px, #12111a 20px);
+    border-bottom: 2px solid #3d3b54;
+}
+
+.clapper-bottom {
+    padding: 8px;
+    font-size: 8px;
+    color: #79769e;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.welcome-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ff007f;
+}
+
+.cyan-text {
+    color: #00f2fe;
+}
+
+.welcome-subtitle {
+    color: #8f8ca8;
+    font-size: 14px;
+    margin-bottom: 40px;
+}
+
+.start-button {
+    background: linear-gradient(90deg, #ff007f, #7928ca);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.app-card {
+    background: #0b0914;
+    border: 2px solid #00f2fe;
+    border-radius: 24px;
+    padding: 20px;
+    width: 100%;
+    box-shadow: 0 0 30px rgba(0, 242, 254, 0.15);
+}
+
+.main-title {
+    font-size: 26px;
+    color: #ff007f;
+    text-align: center;
+}
+
+.sub-header {
+    color: #7928ca;
+    text-align: center;
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 11px;
+    color: #8f8ca8;
+    margin-bottom: 4px;
+    text-align: right;
+}
+
+.input-group input[type="text"] {
+    background-color: #121021;
+    border: 1px solid #221e3b;
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+    font-size: 13px;
+    text-align: right;
+}
+
+.row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+
+.half-width {
+    width: 50%;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: #221e3b;
+    height: 5px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background: #ff007f;
+}
+
+.slider-value {
+    font-size: 10px;
+    color: #5d5a7d;
+    margin-top: 2px;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 22px;
+    cursor: pointer;
+    font-size: 11px;
+    color: #afacc4;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+}
+
+.checkmark {
+    position: absolute;
+    left: 0;
+    height: 14px;
+    width: 14px;
+    background-color: #121021;
+    border: 1px solid #00f2fe;
+    border-radius: 3px;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: #00f2fe;
+}
+
+.color-picker-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.color-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+}
+
+.upload-btn {
+    width: 50%;
+    background-color: #121021;
+    border: 1px dashed #4b457d;
+    color: #afacc4;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.upload-btn:hover {
+    border-color: #00f2fe;
+    color: #fff;
+}
+
+.file-status {
+    text-align: center;
+    font-size: 11px;
+    color: #00f2fe;
+    margin-bottom: 15px;
+}
+
+.generate-button {
+    background: linear-gradient(90deg, #0072ff, #00f2fe);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* تعديل حاوية عرض الفيديو لتصبح بالطول بالكامل 9:16 شاشة كاملة للهاتف */
+.video-preview-wrapper.vertical-aspect {
+    width: 100%;
+    max-width: 340px;
+    margin: 15px auto;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid #221e3b;
+    aspect-ratio: 9 / 16; /* أبعاد كامل الشاشة العمودية تيك توك */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* لملء كامل الشاشة بشكل مثالي وضمان عدم ترك حواف سوداء */
+}
+
+.action-buttons {
+    margin-top: 10px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+}
+
+.save-btn {
+    background: linear-gradient(90deg, #ff007f, #b30059);
+    color: white;
+    box-shadow: 0 4px 10px rgba(255, 0, 127, 0.3);
+}
+
+.return-btn {
+    background-color: #1c1936;
+    color: #afacc4;
+    border: 1px solid #3d3b54;
+}
 
