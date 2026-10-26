@@ -1,1 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ai video w</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+    <!-- 1. واجهة الترحيب -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome-container">
+            <div class="clapperboard-icon">
+                <div class="clapper-top"></div>
+                <div class="clapper-bottom">
+                    <span>DIRECTOR</span>
+                    <span>CAMERA</span>
+                    <span>DATE</span>
+                </div>
+            </div>
+            <h1 class="welcome-title">ai video <span class="cyan-text">w</span></h1>
+            <p class="welcome-subtitle">Create TikToks & Reels in Seconds</p>
+            <button id="start-btn" class="start-button">Start Creating 🚀</button>
+        </div>
+    </div>
+
+    <!-- 2. الواجهة الرئيسية للتطبيق -->
+    <div id="main-app-screen" class="screen">
+        <div class="app-card">
+            <h1 class="main-title">ai video <span class="cyan-text">w</span></h1>
+            <p class="sub-header">Ultimate AI Video Generator</p>
+
+            <div class="input-group">
+                <label>Center Main Text:</label>
+                <input type="text" id="main-caption" placeholder="Main video caption here...">
+            </div>
+
+            <div class="row">
+                <div class="input-group half-width">
+                    <label>Top-Left Text:</label>
+                    <input type="text" id="top-left-text" placeholder="Poiu">
+                </div>
+                <div class="input-group half-width">
+                    <label>Top-Right Text:</label>
+                    <input type="text" id="top-right-text" placeholder="1234">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-group half-width">
+                    <label>Text Size:</label>
+                    <input type="range" id="text-size-slider" min="20" max="60" value="35">
+                    <span class="slider-value">Dynamic Scale</span>
+                </div>
+                <div class="input-group half-width">
+                    <label>Transition Delay:</label>
+                    <input type="range" id="transition-slider" min="1" max="10" step="0.5" value="5">
+                    <span class="slider-value" id="transition-val">5s / Image</span>
+                </div>
+            </div>
+
+            <div class="checkbox-grid">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="tech-neon" checked>
+                    <span class="checkmark"></span> Neon Glow Typing
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="tech-kenburns" checked>
+                    <span class="checkmark"></span> Cinematic Ken-Burns
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="tech-blur" checked>
+                    <span class="checkmark"></span> Smart Blurred BG
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="tech-dust" checked>
+                    <span class="checkmark"></span> Dust Particles Overlay
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="tech-waves">
+                    <span class="checkmark"></span> Audio Sound Waves
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="tech-fade" checked>
+                    <span class="checkmark"></span> Cross-Fade Effect
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="tech-3d-glitch">
+                    <span class="checkmark"></span> 3D Glitch Filter
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="tech-text-anim" checked>
+                    <span class="checkmark"></span> Bounce Text Animation
+                </label>
+            </div>
+
+            <div class="color-picker-row">
+                <div class="color-picker-item">
+                    <input type="color" id="text-color" value="#e000ff">
+                    <label for="text-color">Text</label>
+                </div>
+                <div class="color-picker-item">
+                    <input type="color" id="neon-color" value="#ff0066">
+                    <label for="neon-color">Neon Glow</label>
+                </div>
+            </div>
+
+            <div class="row button-row">
+                <button class="upload-btn" onclick="document.getElementById('image-input').click()">Upload Images 📸</button>
+                <button class="upload-btn" onclick="document.getElementById('music-input').click()">Upload Music 🎵</button>
+                <input type="file" id="image-input" multiple accept="image/*" style="display:none">
+                <input type="file" id="music-input" accept="audio/*" style="display:none">
+            </div>
+            
+            <p id="file-status" class="file-status">No files selected yet</p>
+
+            <button id="generate-btn" class="generate-button">Generate & Compile Masterpiece ⚡</button>
+        </div>
+    </div>
+
+    <!-- 3. واجهة مشغل الفيديو المدمجة (أصبحت تدعم العرض العمودي الكامل 9:16) -->
+    <div id="video-output-screen" class="screen">
+        <div class="app-card video-card">
+            <h2 class="main-title">Your Masterpiece Video 🎬</h2>
+            <div class="video-preview-wrapper vertical-aspect">
+                <!-- أبعاد الكانفاس هنا تم تعديلها لتصبح 720x1280 (شاشة كاملة عمودية) -->
+                <canvas id="videoCanvas" width="720" height="1280" style="display:none;"></canvas>
+                <video id="outputVideo" controls autoplay playsinline class="video-element"></video>
+            </div>
+            <div class="row action-buttons">
+                <a id="download-btn" class="action-btn save-btn" style="display:none;">Save Video 📥</a>
+                <button id="back-btn" class="action-btn return-btn">Back to Edit ⚙️</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
