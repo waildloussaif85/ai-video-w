@@ -1,28 +1,31 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ai video w</title>
+    <title>AI Video App</title>
     <link rel="stylesheet" href="style.css">
-      <script src="script.js" defer></script>
+    <script src="script.js" defer></script>
     <script>
-        document.addEventListener("deviceready", () => {
-            if (typeof admob !== 'undefined') {
-                admob.start({
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.WTN && window.WTN.AdMob) {
+                
+                // تهيئة كود المعرف الرئيسي للتطبيق (App ID)
+                window.WTN.AdMob.configure({
                     appId: "ca-app-pub-3620129121552586~6637913074"
                 });
-                admob.banner.show({
-                    id: "ca-app-pub-3620129121552586/2994181532", 
-                    position: "bottom",
-                    autoShow: true
-                });
-            }
-        }, false);
-    </script>
 
+                // تشغيل إعلان البنر أسفل الشاشة
+                window.WTN.AdMob.bannerAd({
+                    adId: "ca-app-pub-3620129121552586/2994181532"
+                });
+
+            }
+        });
+    </script>
 </head>
 <body>
+
 
     <!-- 1. واجهة الترحيب -->
     <div id="welcome-screen" class="screen active">
@@ -152,5 +155,5 @@
     </div>
 
     <script src="script.js"></script>
-</body>
+</>
 </html>
