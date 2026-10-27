@@ -1,8 +1,8 @@
-<?xml version='1.0' encoding='utf-8'?>
-<widget id="com.videow.app" version="1.0.0" xmlns="http://w3.org">
+<?xml version="1.0" encoding="UTF-8" ?>
+<widget id="com.videow.app" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
     <name>ai video w</name>
-    <description>Application de création de vidéo avec IA</description>
-    <author email="dev@example.com" href="http://example.com">Votre Nom</author>
+    <description>Application de creation de video</description>
+    <author email="dev@example.com">Dev</author>
     
     <content src="index.html" />
     
@@ -10,7 +10,6 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     
-    <!-- ربط إضافات AdMob داخل الـ APK تلقائياً -->
     <plugin name="cordova-plugin-admob-plus" spec="^1.0.0">
         <variable name="APP_ID_ANDROID" value="ca-app-pub-3620129121552586~6637913074" />
     </plugin>
@@ -20,4 +19,3 @@
         <allow-intent href="market:*" />
     </platform>
 </widget>
-
