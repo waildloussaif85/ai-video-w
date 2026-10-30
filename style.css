@@ -6,211 +6,174 @@
 }
 
 body {
-    background-color: #050508;
+    background-color: #0b0c10;
     color: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow-x: hidden;
+    padding: 10px;
 }
 
 .screen {
     display: none;
     width: 100%;
     max-width: 420px;
-    padding: 15px;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 .screen.active {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display: block;
+}
+
+.app-card {
+    background: linear-gradient(145deg, #1f2833, #151a21);
+    border: 2px solid #00f2fe;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0, 242, 254, 0.15);
+    text-align: center;
 }
 
 .welcome-container {
+    background: #11141a;
+    border-radius: 20px;
+    padding: 30px 15px;
     text-align: center;
-    background: linear-gradient(145deg, #0f0c1b, #05020a);
-    padding: 40px 30px;
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
-    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 .clapperboard-icon {
-    width: 120px;
-    height: 100px;
-    background-color: #1a1924;
-    margin: 0 auto 30px auto;
-    border-radius: 8px;
-    border: 2px solid #3d3b54;
-    box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+    width: 100px;
+    margin: 0 auto 20px auto;
+    border: 2px solid #00f2fe;
+    border-radius: 10px;
     overflow: hidden;
+    background: #1f2833;
 }
 
 .clapper-top {
     height: 25px;
-    background: repeating-linear-gradient(45deg, #2c2a3e, #2c2a3e 10px, #12111a 10px, #12111a 20px);
-    border-bottom: 2px solid #3d3b54;
+    background: linear-gradient(45deg, #111 25%, #fff 25%, #fff 50%, #111 50%, #111 75%, #fff 75%);
+    background-size: 15px 15px;
+    border-bottom: 2px solid #00f2fe;
 }
 
 .clapper-bottom {
-    padding: 8px;
-    font-size: 8px;
-    color: #79769e;
-    text-align: left;
+    padding: 10px 5px;
+    font-size: 9px;
+    font-weight: bold;
+    color: #66748f;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
 }
 
-.welcome-title {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #ff007f;
+.welcome-title, .main-title {
+    font-size: 28px;
+    font-weight: 900;
+    background: linear-gradient(45deg, #ff007f, #00f2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
+    text-transform: uppercase;
 }
 
-.cyan-text {
-    color: #00f2fe;
-}
-
-.welcome-subtitle {
-    color: #8f8ca8;
+.welcome-subtitle, .sub-header {
     font-size: 14px;
-    margin-bottom: 40px;
+    color: #c5a1ff;
+    margin-bottom: 25px;
 }
 
-.start-button {
-    background: linear-gradient(90deg, #ff007f, #7928ca);
+.sub-header {
+    color: #ff007f;
+    margin-bottom: 15px;
+    font-size: 12px;
+}
+
+.start-btn {
+    background: linear-gradient(90deg, #ff007f, #7f00ff);
     color: white;
     border: none;
-    padding: 14px 40px;
+    padding: 12px 25px;
     font-size: 16px;
     font-weight: bold;
-    border-radius: 30px;
+    border-radius: 25px;
     cursor: pointer;
     width: 100%;
 }
 
-.app-card {
-    background: #0b0914;
-    border: 2px solid #00f2fe;
-    border-radius: 24px;
-    padding: 20px;
-    width: 100%;
-    box-shadow: 0 0 30px rgba(0, 242, 254, 0.15);
-}
-
-.main-title {
-    font-size: 26px;
-    color: #ff007f;
-    text-align: center;
-}
-
-.sub-header {
-    color: #7928ca;
-    text-align: center;
-    font-size: 12px;
-    margin-bottom: 20px;
-}
-
 .input-group {
-    margin-bottom: 14px;
-    display: flex;
-    flex-direction: column;
+    margin-bottom: 12px;
+    text-align: left;
 }
 
 .input-group label {
-    font-size: 11px;
-    color: #8f8ca8;
+    display: block;
+    font-size: 12px;
+    color: #66748f;
     margin-bottom: 4px;
-    text-align: right;
+    font-weight: 600;
 }
 
 .input-group input[type="text"] {
-    background-color: #121021;
-    border: 1px solid #221e3b;
+    width: 100%;
+    background: #0b0c10;
+    border: 1px solid #1f2833;
     border-radius: 8px;
-    padding: 10px;
+    padding: 8px 12px;
     color: white;
     font-size: 13px;
-    text-align: right;
 }
 
 .row {
     display: flex;
-    gap: 12px;
-    width: 100%;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
 .half-width {
-    width: 50%;
+    flex: 1;
 }
 
 input[type="range"] {
-    -webkit-appearance: none;
     width: 100%;
-    background: #221e3b;
-    height: 5px;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 14px;
-    width: 14px;
-    border-radius: 50%;
-    background: #ff007f;
+    accent-color: #ff007f;
+    background: #0b0c10;
+    height: 4px;
 }
 
 .slider-value {
+    display: block;
     font-size: 10px;
-    color: #5d5a7d;
+    color: #ff007f;
     margin-top: 2px;
 }
 
 .checkbox-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin: 15px 0;
+    gap: 8px;
+    margin: 12px 0;
+    text-align: left;
 }
 
 .checkbox-container {
     display: flex;
     align-items: center;
-    position: relative;
-    padding-left: 22px;
-    cursor: pointer;
+    gap: 6px;
     font-size: 11px;
-    color: #afacc4;
-}
-
-.checkbox-container input {
-    position: absolute;
-    opacity: 0;
-}
-
-.checkmark {
-    position: absolute;
-    left: 0;
-    height: 14px;
-    width: 14px;
-    background-color: #121021;
-    border: 1px solid #00f2fe;
-    border-radius: 3px;
-}
-
-.checkbox-container input:checked ~ .checkmark {
-    background-color: #00f2fe;
+    color: #ffffff;
+    cursor: pointer;
 }
 
 .color-picker-row {
     display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
+    justify-content: space-around;
+    background: #0b0c10;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 12px;
 }
 
 .color-picker-item {
@@ -220,89 +183,100 @@ input[type="range"]::-webkit-slider-thumb {
     font-size: 11px;
 }
 
+.color-picker-item input[type="color"] {
+    width: 30px;
+    height: 20px;
+    border: none;
+    background: none;
+}
+
 .upload-btn {
-    width: 50%;
-    background-color: #121021;
-    border: 1px dashed #4b457d;
-    color: #afacc4;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.upload-btn:hover {
-    border-color: #00f2fe;
-    color: #fff;
-}
-
-.file-status {
-    text-align: center;
-    font-size: 11px;
+    flex: 1;
+    background: #1f2833;
+    border: 1px dashed #00f2fe;
     color: #00f2fe;
-    margin-bottom: 15px;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
 }
 
-.generate-button {
-    background: linear-gradient(90deg, #0072ff, #00f2fe);
-    color: white;
+.file-status-text {
+    font-size: 11px;
+    color: #66748f;
+    margin-bottom: 10px;
+}
+
+.generate-btn {
+    background: linear-gradient(90deg, #00f2fe, #4facfe);
+    color: #0b0c10;
     border: none;
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     font-size: 14px;
     font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 242, 254, 0.2);
 }
 
-/* تعديل حاوية عرض الفيديو لتصبح بالطول بالكامل 9:16 شاشة كاملة للهاتف */
-.video-preview-wrapper.vertical-aspect {
-    width: 100%;
-    max-width: 340px;
-    margin: 15px auto;
+/* واجهة رندرة الفيديو بمواصفات تيك توك */
+.video-preview-wrapper {
     background: #000;
-    border-radius: 16px;
+    border-radius: 12px;
     overflow: hidden;
-    border: 2px solid #221e3b;
-    aspect-ratio: 9 / 16; /* أبعاد كامل الشاشة العمودية تيك توك */
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    max-height: 480px;
     display: flex;
     justify-content: center;
     align-items: center;
+    border: 1px solid #1f2833;
+    margin-bottom: 15px;
 }
 
-.video-element {
+#outputVideo {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* لملء كامل الشاشة بشكل مثالي وضمان عدم ترك حواف سوداء */
+    object-fit: cover;
 }
 
-.action-buttons {
-    margin-top: 10px;
+/* تنسيق أزرار شاشة العرض الملونة */
+.action-buttons-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
 }
 
 .action-btn {
     flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 12px;
+    padding: 12px;
+    border-radius: 25px;
+    font-size: 14px;
     font-weight: bold;
-    text-align: center;
-    cursor: pointer;
     text-decoration: none;
+    text-align: center;
     border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.1s;
 }
 
-.save-btn {
-    background: linear-gradient(90deg, #ff007f, #b30059);
-    color: white;
-    box-shadow: 0 4px 10px rgba(255, 0, 127, 0.3);
+.action-btn:active {
+    transform: scale(0.95);
 }
 
-.return-btn {
-    background-color: #1c1936;
-    color: #afacc4;
-    border: 1px solid #3d3b54;
+.download-btn-style {
+    background: linear-gradient(90deg, #00f2fe, #4facfe);
+    color: #0b0c10;
+}
+
+.back-btn-style {
+    background: linear-gradient(90deg, #ff007f, #7f00ff);
+    color: #ffffff;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
