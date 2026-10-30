@@ -5,27 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            if (window.WTN && window.WTN.AdMob) {
-                
-                // تهيئة كود المعرف الرئيسي للتطبيق (App ID)
-                window.WTN.AdMob.configure({
-                    appId: "ca-app-pub-3620129121552586~6637913074"
-                });
-
-                // تشغيل إعلان البنر أسفل الشاشة
-                window.WTN.AdMob.bannerAd({
-                    adId: "ca-app-pub-3620129121552586/2994181532"
-                });
-
-            }
-        });
-    </script>
 </head>
 <body>
-
 
     <!-- 1. واجهة الترحيب -->
     <div id="welcome-screen" class="screen active">
@@ -38,16 +19,16 @@
                     <span>DATE</span>
                 </div>
             </div>
-            <h1 class="welcome-title">ai video <span class="cyan-text">w</span></h1>
+            <h1 class="welcome-title">ai video w</h1>
             <p class="welcome-subtitle">Create TikToks & Reels in Seconds</p>
-            <button id="start-btn" class="start-button">Start Creating 🚀</button>
+            <button id="start-btn" class="start-btn">Start Creating 🚀</button>
         </div>
     </div>
 
     <!-- 2. الواجهة الرئيسية للتطبيق -->
     <div id="main-app-screen" class="screen">
         <div class="app-card">
-            <h1 class="main-title">ai video <span class="cyan-text">w</span></h1>
+            <h1 class="main-title">ai video w</h1>
             <p class="sub-header">Ultimate AI Video Generator</p>
 
             <div class="input-group">
@@ -69,91 +50,89 @@
             <div class="row">
                 <div class="input-group half-width">
                     <label>Text Size:</label>
-                    <input type="range" id="text-size-slider" min="20" max="60" value="35">
+                    <input type="range" id="text-size-slider" min="10" max="100" value="30">
                     <span class="slider-value">Dynamic Scale</span>
                 </div>
                 <div class="input-group half-width">
                     <label>Transition Delay:</label>
-                    <input type="range" id="transition-slider" min="1" max="10" step="0.5" value="5">
-                    <span class="slider-value" id="transition-val">5s / Image</span>
+                    <input type="range" id="transition-slider" min="1" max="10" value="5">
+                    <span class="slider-value">5s / Image</span>
                 </div>
             </div>
 
             <div class="checkbox-grid">
                 <label class="checkbox-container">
-                    <input type="checkbox" id="tech-neon" checked>
-                    <span class="checkmark"></span> Neon Glow Typing
+                    <input type="checkbox" id="neon-glow-typing">
+                    <span class="checkmark">Neon Glow Typing</span>
                 </label>
                 <label class="checkbox-container">
-                    <input type="checkbox" id="tech-kenburns" checked>
-                    <span class="checkmark"></span> Cinematic Ken-Burns
+                    <input type="checkbox" id="cinematic-ken-burns">
+                    <span class="checkmark">Cinematic Ken-Burns</span>
                 </label>
                 <label class="checkbox-container">
-                    <input type="checkbox" id="tech-blur" checked>
-                    <span class="checkmark"></span> Smart Blurred BG
+                    <input type="checkbox" id="smart-blurred-bg">
+                    <span class="checkmark">Smart Blurred BG</span>
                 </label>
                 <label class="checkbox-container">
-                    <input type="checkbox" id="tech-dust" checked>
-                    <span class="checkmark"></span> Dust Particles Overlay
+                    <input type="checkbox" id="dust-particles">
+                    <span class="checkmark">Dust Particles Overlay</span>
                 </label>
                 <label class="checkbox-container">
-                    <input type="checkbox" id="tech-waves">
-                    <span class="checkmark"></span> Audio Sound Waves
+                    <input type="checkbox" id="audio-waves">
+                    <span class="checkmark">Audio Sound Waves</span>
                 </label>
                 <label class="checkbox-container">
-                    <input type="checkbox" id="tech-fade" checked>
-                    <span class="checkmark"></span> Cross-Fade Effect
+                    <input type="checkbox" id="cross-fade">
+                    <span class="checkmark">Cross-Fade Effect</span>
                 </label>
                 <label class="checkbox-container">
-                    <input type="checkbox" id="tech-3d-glitch">
-                    <span class="checkmark"></span> 3D Glitch Filter
+                    <input type="checkbox" id="glitch-filter">
+                    <span class="checkmark">3D Glitch Filter</span>
                 </label>
                 <label class="checkbox-container">
-                    <input type="checkbox" id="tech-text-anim" checked>
-                    <span class="checkmark"></span> Bounce Text Animation
+                    <input type="checkbox" id="bounce-animation">
+                    <span class="checkmark">Bounce Text Animation</span>
                 </label>
             </div>
 
             <div class="color-picker-row">
                 <div class="color-picker-item">
-                    <input type="color" id="text-color" value="#e000ff">
-                    <label for="text-color">Text</label>
+                    <input type="color" id="text-color-picker" value="#ffffff">
+                    <label for="text-color-picker">Text</label>
                 </div>
                 <div class="color-picker-item">
-                    <input type="color" id="neon-color" value="#ff0066">
-                    <label for="neon-color">Neon Glow</label>
+                    <input type="color" id="neon-color-picker" value="#ff007f">
+                    <label for="neon-color-picker">Neon Glow</label>
                 </div>
             </div>
 
             <div class="row button-row">
-                <button class="upload-btn" onclick="document.getElementById('image-input').click()">Upload Images 📸</button>
-                <button class="upload-btn" onclick="document.getElementById('music-input').click()">Upload Music 🎵</button>
-                <input type="file" id="image-input" multiple accept="image/*" style="display:none">
-                <input type="file" id="music-input" accept="audio/*" style="display:none">
+                <button class="upload-btn" id="upload-images-trigger">Upload Images 📸</button>
+                <button class="upload-btn" id="upload-music-trigger">Upload Music 🎵</button>
+                <input type="file" id="image-input" multiple accept="image/*" style="display:none;">
+                <input type="file" id="music-input" accept="audio/*" style="display:none;">
             </div>
-            
-            <p id="file-status" class="file-status">No files selected yet</p>
 
-            <button id="generate-btn" class="generate-button">Generate & Compile Masterpiece ⚡</button>
+            <p id="file-status" class="file-status-text">No files selected yet</p>
+            <button id="generate-btn" class="generate-btn">Generate & Compile Masterpiece ⚡</button>
         </div>
     </div>
 
-    <!-- 3. واجهة مشغل الفيديو المدمجة (أصبحت تدعم العرض العمودي الكامل 9:16) -->
+    <!-- 3. شاشة النتيجة النهائية وعرض الفيديو -->
     <div id="video-output-screen" class="screen">
         <div class="app-card video-card">
-            <h2 class="main-title">Your Masterpiece Video 🎬</h2>
-            <div class="video-preview-wrapper vertical-aspect">
-                <!-- أبعاد الكانفاس هنا تم تعديلها لتصبح 720x1280 (شاشة كاملة عمودية) -->
-                <canvas id="videoCanvas" width="720" height="1280" style="display:none;"></canvas>
-                <video id="outputVideo" controls autoplay playsinline class="video-element"></video>
+            <div class="video-preview-wrapper">
+                <canvas id="videoCanvas" width="1080" height="1920" style="display: none;"></canvas>
+                <video id="outputVideo" autoplay controls playsinline></video>
             </div>
-            <div class="row action-buttons">
-                <a id="download-btn" class="action-btn save-btn" style="display:none;">Save Video 📥</a>
-                <button id="back-btn" class="action-btn return-btn">Back to Edit ⚙️</button>
+            <div class="action-buttons-row">
+                <a id="download-btn" class="action-btn download-btn-style">Save Video 📥</a>
+                <button id="back-btn" class="action-btn back-btn-style">Create Another 🔄</button>
             </div>
         </div>
     </div>
 
     <script src="script.js"></script>
-</>
+</body>
 </html>
+
