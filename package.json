@@ -1,1 +1,18 @@
+{
+  "name": "ai-video-w",
+  "version": "1.0.0",
+  "description": "AI Video Generator",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/android": "^6.0.0",
+    "@capacitor-community/admob": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}
 
