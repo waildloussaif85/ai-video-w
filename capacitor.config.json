@@ -1,1 +1,13 @@
+{
+  "appId": "com.videow.app",
+  "appName": "ai video w",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "AdMob": {
+      "initializeOnTesting": true,
+      "androidAppId": "ca-app-pub-3620129121552586~6637913074"
+    }
+  }
+}
 
