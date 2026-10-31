@@ -1,50 +1,63 @@
+
 // @ts-nocheck
 /* eslint-disable */
-document.addEventListener("DOMContentLoaded", function () {
+
+document.addEventListener("DOMContentLoaded", () => {
     const startBtn = document.getElementById("start-btn");
     const welcomeScreen = document.getElementById("welcome-screen");
     const mainAppScreen = document.getElementById("main-app-screen");
     const videoOutputScreen = document.getElementById("video-output-screen");
     const generateBtn = document.getElementById("generate-btn");
     const backBtn = document.getElementById("back-btn");
+    
     const imageInput = document.getElementById("image-input");
     const musicInput = document.getElementById("music-input");
-    const uploadImagesTrigger = document.getElementById("upload-images-trigger");
-    const uploadMusicTrigger = document.getElementById("upload-music-trigger");
     const fileStatus = document.getElementById("file-status");
-    const canvas = document.getElementById("videoCanvas");
-    const ctx = canvas ? canvas.getContext("2d") : null;
+    const canvas = document.getElementById("videoCanvas"); 
     const outputVideo = document.getElementById("outputVideo");
     const downloadBtn = document.getElementById("download-btn");
-    const transitionSlider = document.getElementById("transition-slider");
 
+    const mainTextInput = document.getElementById("main-c");
+    const topLeftInput = document.getElementById("main-l") || document.getElementById("top-left-text");
+    const topRightInput = document.getElementById("main-r") || document.getElementById("top-right-text");
+    const textSizeInput = document.getElementById("text-size");
+
+    let ctx = canvas ? canvas.getContext("2d") : null;
     let loadedImages = [];
-    let audioContext = null, audioSourceNode = null, audioDestinationNode = null, uploadedAudioBuffer = null;
+    let mediaRecorder = null;
+    let chunks = [];
+    let animationFrameId = null;
+    let isGenerating = false;
+    
+    // مشغل صوتي خارجي لتفادي حظر المتصفحات للموسيقى المدمجة
+    let bgAudioPlayer = new Audio();
+    bgAudioPlayer.loop = true;
 
-    if (uploadImagesTrigger && imageInput) uploadImagesTrigger.addEventListener("click", function () { imageInput.click(); });
-    if (uploadMusicTrigger && musicInput) uploadMusicTrigger.addEventListener("click", function () { musicInput.click(); });
+    // تفعيل إعلان AdMob الحقيقي
+    document.addEventListener("deviceready", () => {
+        if (typeof admob !== 'undefined') {
+            try {
+                admob.start();
+                const banner = new admob.BannerAd({
+                    adUnitId: 'ca-app-pub-3620129121552586/4258571441', 
+                    position: 'bottom',
+                    offset: 0
+                });
+                banner.show();
+            } catch (e) { console.log(e); }
+        }
+    }, false);
 
     if (startBtn && welcomeScreen && mainAppScreen) {
-        startBtn.addEventListener("click", function () {
-            welcomeScreen.classList.remove("active");
-            mainAppScreen.classList.add("active");
-            if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        startBtn.addEventListener("click", () => {
+            welcomeScreen.style.display = "none";
+            mainAppScreen.style.display = "block";
         });
     }
-    if (backBtn && videoOutputScreen && mainAppScreen) {
-        backBtn.addEventListener("click", function () {
-            videoOutputScreen.classList.remove("active");
-            mainAppScreen.classList.add("active");
-        });
-    }
-    if (transitionSlider) {
-        const transitionVal = transitionSlider.nextElementSibling;
-        transitionSlider.addEventListener("input", function (e) {
-            if (transitionVal && e.target) transitionVal.textContent = e.target.value + "s / Image";
-        });
-    }
+
+    // استقبال ومعالجة الصور المرفوعة
     if (imageInput) {
-        imageInput.addEventListener("change", function (e) {
+        imageInput.addEventListener("change", (e) => {
             loadedImages = [];
             const files = e.target.files;
             let loadedCount = 0;
@@ -52,134 +65,136 @@ document.addEventListener("DOMContentLoaded", function () {
             for (let i = 0; i < files.length; i++) {
                 const reader = new FileReader();
                 reader.onload = function (event) {
-                    if (event.target && event.target.result) {
-                        const img = new Image();
-                        img.onload = function () {
-                            loadedCount++;
-                            if (loadedCount === files.length) {
-                                if (fileStatus) fileStatus.textContent = "📸 تم تحميل " + loadedImages.length + " صور. " + (uploadedAudioBuffer ? "🎵 الموسيقى جاهزة." : "");
-                            }
-                        };
-                        img.src = event.target.result;
+                    const img = new Image();
+                    img.onload = function () {
+                        loadedCount++;
                         loadedImages.push(img);
-                    }
+                        if (fileStatus) fileStatus.innerText = `تم تحميل ${loadedCount} صور بنجاح 📸`;
+                    };
+                    img.src = event.target.result;
                 };
                 reader.readAsDataURL(files[i]);
             }
         });
     }
+
+    // استقبال ومعالجة الموسيقى وتخطي قيود الويب
     if (musicInput) {
-        musicInput.addEventListener("change", function (e) {
+        musicInput.addEventListener("change", (e) => {
             const files = e.target.files;
             if (!files || files.length === 0) return;
             const reader = new FileReader();
             reader.onload = function (event) {
-                if (event.target && event.target.result) {
-                    if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    audioContext.decodeAudioData(event.target.result, function (buffer) {
-                        uploadedAudioBuffer = buffer;
-                        if (fileStatus) fileStatus.textContent = (loadedImages.length > 0 ? "📸 تم تحميل " + loadedImages.length + " صور. " : "") + "🎵 الموسيقى جاهزة.";
-                    }, function (err) { console.error(err); });
-                }
+                bgAudioPlayer.src = event.target.result;
+                bgAudioPlayer.load();
+                if (fileStatus) fileStatus.innerText = "تم تحميل الموسيقى ومزامنتها بنجاح 🎵";
             };
-            reader.readAsArrayBuffer(files[0]);
+            reader.readAsDataURL(files[0]);
         });
     }
-    if (generateBtn && canvas && ctx && outputVideo && downloadBtn && transitionSlider) {
-        generateBtn.addEventListener("click", function () {
-            if (loadedImages.length === 0) { alert("Please upload some images first!"); return; }
-            mainAppScreen.classList.remove("active");
-            videoOutputScreen.classList.add("active");
 
+    if (backBtn && videoOutputScreen && mainAppScreen) {
+        backBtn.addEventListener("click", () => {
+            isGenerating = false;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+            bgAudioPlayer.pause();
+            bgAudioPlayer.currentTime = 0;
+            
+            videoOutputScreen.style.display = "none";
+            mainAppScreen.style.display = "block";
+            
+            if (outputVideo) {
+                outputVideo.pause();
+                outputVideo.src = "";
+                outputVideo.srcObject = null;
+            }
+        });
+    }
+
+    // توليد وتشغيل الفيديو بشكل فوري ومباشر مع الصوت والنصوص
+    if (generateBtn && canvas && ctx && outputVideo) {
+        generateBtn.addEventListener("click", () => {
+            if (loadedImages.length === 0) { alert("الرجاء رفع الصور أولاً!"); return; }
+            isGenerating = true;
+            chunks = [];
+            mainAppScreen.style.display = "none";
+            videoOutputScreen.style.display = "block";
+            
             canvas.width = 1080;
             canvas.height = 1920;
-
-            const mainCaption = document.getElementById("main-caption").value || "";
-            const topLeftTxt = document.getElementById("top-left-text").value || "";
-            const topRightTxt = document.getElementById("top-right-text").value || "";
-            const textSize = document.getElementById("text-size-slider").value || "30";
-            const durationPerImg = parseFloat(transitionSlider.value) * 1000;
-            const isKenBurns = document.getElementById("cinematic-ken-burns").checked || false;
-            const isNeonGlow = document.getElementById("neon-glow-typing").checked || false;
-            const isGlitch = document.getElementById("glitch-filter").checked || false;
-            const isTextAnim = document.getElementById("bounce-animation").checked || false;
-            const textColor = document.getElementById("text-color-picker").value || "#ffffff";
-            const neonColor = document.getElementById("neon-color-picker").value || "#ff007f";
-
+            
+            const durationSlider = document.getElementById("durationPerImg");
+            const durationPerImg = durationSlider ? parseFloat(durationSlider.value) : 3;
+            const totalDuration = loadedImages.length * durationPerImg * 1000; 
+            
             const videoStream = canvas.captureStream(30);
-            let finalStream = new MediaStream();
-            videoStream.getVideoTracks().forEach(function (track) { finalStream.addTrack(track); });
+            outputVideo.srcObject = videoStream;
+            outputVideo.play().catch(e => console.log(e));
 
-            if (uploadedAudioBuffer && audioContext) {
-                audioDestinationNode = audioContext.createMediaStreamDestination();
-                audioSourceNode = audioContext.createBufferSource();
-                audioSourceNode.buffer = uploadedAudioBuffer;
-                audioSourceNode.loop = true;
-                audioSourceNode.connect(audioDestinationNode);
-                audioDestinationNode.stream.getAudioTracks().forEach(function (track) { finalStream.addTrack(track); });
-                audioSourceNode.start(0);
+            // تشغيل الموسيقى فورياً بالتزامن مع البث المباشر
+            if (bgAudioPlayer.src) {
+                bgAudioPlayer.currentTime = 0;
+                bgAudioPlayer.play().catch(e => console.log("Audio lock bypass error:", e));
             }
 
-            // استخدام الصيغة القياسية الأكثر مرونة وسرعة لحل مشكلة البطء وخروج الصوت في الأندرويد
-            const mediaRecorder = new MediaRecorder(finalStream);
-            let chunks = [];
-            mediaRecorder.ondataavailable = function (e) { if (e.data && e.data.size > 0) chunks.push(e.data); };
-            mediaRecorder.onstop = function () {
-                if (audioSourceNode) { try { audioSourceNode.stop(); } catch (ex) { } }
-                const blob = new Blob(chunks, { type: 'video/mp4' });
-                const videoURL = URL.createObjectURL(blob);
-                outputVideo.src = videoURL;
-                outputVideo.load();
-                outputVideo.play();
-                downloadBtn.href = videoURL;
-                downloadBtn.download = "tiktok_masterpiece.mp4";
-                downloadBtn.style.display = "block";
+            mediaRecorder = new MediaRecorder(videoStream, { mimeType: 'video/webm; codecs=vp8', videoBitsPerSecond: 2000000 });
+            mediaRecorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
+            mediaRecorder.onstop = function() {
+                if (chunks.length > 0) {
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const fileURL = URL.createObjectURL(blob);
+                    if (downloadBtn) { downloadBtn.href = fileURL; downloadBtn.download = "tiktok_video.webm"; downloadBtn.style.display = "block"; }
+                }
             };
-
             mediaRecorder.start();
-            let startTime = Date.now(), totalDuration = loadedImages.length * durationPerImg;
+            let startTime = Date.now();
 
             function drawFrame() {
+                if (!isGenerating) return;
                 let elapsed = Date.now() - startTime;
-                if (elapsed >= totalDuration) { mediaRecorder.stop(); return; }
-                let currentImgIndex = Math.floor(elapsed / durationPerImg);
-                let img = loadedImages[currentImgIndex];
-                let progress = (elapsed % durationPerImg) / durationPerImg;
+                if (elapsed >= totalDuration) {
+                    isGenerating = false;
+                    if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+                    bgAudioPlayer.pause();
+                    if (chunks.length > 0) {
+                        outputVideo.srcObject = null;
+                        outputVideo.src = URL.createObjectURL(new Blob(chunks, { type: 'video/webm' }));
+                        outputVideo.load(); outputVideo.play();
+                    }
+                    return;
+                }
+
+                let currentImgIndex = Math.floor(elapsed / (durationPerImg * 1000));
+                let img = loadedImages[currentImgIndex % loadedImages.length];
 
                 if (img) {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.save();
-                    let imgScale = Math.max(canvas.width / img.width, canvas.height / img.height);
-                    if (isKenBurns) imgScale *= (1 + progress * 0.15);
-                    let xOffset = (canvas.width - img.width * imgScale) / 2;
-                    let yOffset = (canvas.height - img.height * imgScale) / 2;
-                    ctx.translate(canvas.width / 2, canvas.height / 2);
-                    ctx.drawImage(img, xOffset - canvas.width / 2, yOffset - canvas.height / 2, img.width * imgScale, img.height * imgScale);
+                    ctx.fillStyle = "#000000"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    let scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+                    ctx.drawImage(img, (canvas.width - img.width * scale) / 2, (canvas.height - img.height * scale) / 2, img.width * scale, img.height * scale);
                     ctx.restore();
 
-                    if (isGlitch && Math.random() > 0.85) {
-                        ctx.fillStyle = "rgba(0, 255, 255, 0.3)";
-                        ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 50, 10);
+                    ctx.save();
+                    const currentTextSize = textSizeInput ? parseInt(textSizeInput.value) : 50;
+                    ctx.fillStyle = "#ffffff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+
+                    if (mainTextInput && mainTextInput.value) {
+                        ctx.font = `bold ${currentTextSize}px sans-serif`;
+                        ctx.shadowColor = "#ff007f"; ctx.shadowBlur = 25;
+                        ctx.fillText(mainTextInput.value, canvas.width / 2, canvas.height / 2);
+                        ctx.shadowBlur = 0;
                     }
-                    let textYPosition = canvas.height / 2;
-                    if (isTextAnim) textYPosition += Math.sin(progress * Math.PI * 2) * 15;
-
-                    ctx.font = "bold " + textSize + "px sans-serif";
-                    ctx.textAlign = "center";
-                    if (isNeonGlow) { ctx.shadowColor = neonColor; ctx.shadowBlur = 20; } else { ctx.shadowBlur = 0; }
-                    ctx.fillStyle = textColor;
-                    ctx.fillText(mainCaption, canvas.width / 2, textYPosition);
-
-                    ctx.font = "bold 32px sans-serif";
-                    ctx.shadowBlur = 0;
-                    if (topLeftTxt) { ctx.textAlign = "left"; ctx.fillText(topLeftTxt, 50, 80); }
-                    if (topRightTxt) { ctx.textAlign = "right"; ctx.fillText(topRightTxt, canvas.width - 50, 80); }
+                    
+                    ctx.font = "bold 40px sans-serif";
+                    if (topLeftInput && topLeftInput.value) { ctx.textAlign = "left"; ctx.fillText(topLeftInput.value, 80, 200); }
+                    if (topRightInput && topRightInput.value) { ctx.textAlign = "right"; ctx.fillText(topRightInput.value, canvas.width - 80, 200); }
+                    ctx.restore();
                 }
-                requestAnimationFrame(drawFrame);
+                animationFrameId = requestAnimationFrame(drawFrame);
             }
             drawFrame();
         });
     }
 });
-
-
