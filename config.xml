@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<widget id="com.ai.videow.app" version="1.0.0" xmlns="http://w3.org">
-    <name>AI Video W</name>
-    <description>AI Video Generator Application</description>
-    <author email="dev@example.com" href="http://example.com">Developer</author>
-    <content src="index.html" />
-    <preference name="AllowInlineMediaPlayback" value="true" />
-    <preference name="MediaPlaybackRequiresUserAction" value="false" />
-</widget>
