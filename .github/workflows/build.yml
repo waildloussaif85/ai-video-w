@@ -14,7 +14,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Install Cordova
         run: npm install -g cordova
@@ -23,16 +23,9 @@ jobs:
         run: |
           cordova create build-dir com.walid.aivideow "ai video w"
           cd build-dir
-          cordova platform add android@10.1.2
+          cordova platform add android@11.0.0 --nobackup
           rm -rf www/*
           cp -r ../* www/ || true
-          cordova plugin add cordova-plugin-admob-plus
+          cordova plugin add cordova-plugin-admob-plus --variable ADMOB_APP_ID_ANDROID="ca-app-pub-3620129121552586~4258571441"
           cordova plugin add cordova-plugin-unityads
-          cordova build android --release
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release-apk
-          path: build-dir/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
-
+          cordova build android --release --device --no-telemetry
