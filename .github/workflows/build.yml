@@ -1,1 +1,38 @@
+name: Build Android APK
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      - name: Create Cordova Project & Build
+        run: |
+          cordova create build-dir com.walid.aivideow "ai video w"
+          cd build-dir
+          cordova platform add android@10.1.2
+          rm -rf www/*
+          cp -r ../* www/ || true
+          cordova plugin add cordova-plugin-admob-plus
+          cordova plugin add cordova-plugin-unityads
+          cordova build android --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release-apk
+          path: build-dir/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
 
