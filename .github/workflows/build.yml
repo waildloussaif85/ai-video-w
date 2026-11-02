@@ -4,10 +4,10 @@ jobs:
   android-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: Install Cordova
         run: npm install -g cordova
       - name: Create Cordova Project & Build
@@ -19,7 +19,7 @@ jobs:
           cp -r ../index.html ../script.js ../style.css ../config.xml www/
           cordova build android --device
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
           path: build-dir/platforms/android/app/build/outputs/apk/debug/app-debug.apk
