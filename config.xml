@@ -6,13 +6,11 @@
 
     <content src="index.html" />
 
-    <!-- فتح صلاحيات الإنترنت والشبكة بالكامل للإعلانات -->
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-navigation href="*" />
 
-    <!-- استدعاء إضافات الإعلانات والحفظ المطلوبة لبناء الـ APK -->
     <plugin name="cordova-plugin-admob-plus" spec="^0.0.0" />
     <plugin name="cordova-plugin-unityads" spec="^0.0.0" />
     <plugin name="cordova-plugin-file" spec="^8.0.0" />
@@ -22,14 +20,14 @@
         <preference name="GradlePluginKotlinVersion" value="1.9.20" />
         <preference name="AndroidPersistentFileLocation" value="Compatibility" />
         
-        <!-- صلاحيات نظام أندرويد الإجبارية لحفظ الفيديوهات في الذاكرة دون تجمّد -->
         <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.RECORD_AUDIO" />
+            <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
             <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
             <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
         </config-file>
 
-        <!-- معرف تطبيق AdMob الخاص بك ليفعل ظهور الإعلانات -->
         <preference name="ADMOB_APP_ID_ANDROID" value="ca-app-pub-3620129121552586~4258571441" />
     </platform>
 </widget>
