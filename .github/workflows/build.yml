@@ -1,1 +1,25 @@
+name: Build Android APK
+on: [push]
+jobs:
+  android-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install Cordova
+        run: npm install -g cordova
+      - name: Create Cordova Project & Build
+        run: |
+          cordova create build-dir com.aivideo.app "AiVideo"
+          cp index.html script.js style.css config.xml build-dir/www/
+          cd build-dir
+          cordova platform add android
+          cordova build android --device
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release-apk
+          path: build-dir/platforms/android/app/build/outputs/apk/debug/app-debug.apk
 
