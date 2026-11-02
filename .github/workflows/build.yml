@@ -13,13 +13,13 @@ jobs:
       - name: Create Cordova Project & Build
         run: |
           cordova create build-dir com.aivideo.app "AiVideo"
-          cp index.html script.js style.css config.xml build-dir/www/
           cd build-dir
           cordova platform add android
+          mkdir -p www
+          cp -r ../index.html ../script.js ../style.css ../config.xml www/
           cordova build android --device
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: app-release-apk
           path: build-dir/platforms/android/app/build/outputs/apk/debug/app-debug.apk
-
