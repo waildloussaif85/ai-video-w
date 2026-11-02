@@ -1,30 +1,35 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.walid.aivideow" version="1.0.0" xmlns="http://apache.org">
     <name>ai video w</name>
-    <description>صناعة وتوليد الفيديو الذكي مع دمج الإعلانات</description>
+    <description>صناعة وتوليد الفيديو الذكي مع دمج الإعلانات والصوت</description>
     <author email="walidloussaif84@gmail.com">Walid</author>
 
-    <!-- الملف الرئيسي لتشغيل التطبيق -->
     <content src="index.html" />
 
-    <!-- إعدادات الوصول والشبكة -->
+    <!-- فتح صلاحيات الإنترنت والشبكة بالكامل للإعلانات -->
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-navigation href="*" />
 
-    <!-- مكتبات وإضافات الإعلانات والحفظ المطلوبة لبناء الـ APK -->
+    <!-- استدعاء إضافات الإعلانات والحفظ المطلوبة لبناء الـ APK -->
     <plugin name="cordova-plugin-admob-plus" spec="^0.0.0" />
     <plugin name="cordova-plugin-unityads" spec="^0.0.0" />
     <plugin name="cordova-plugin-file" spec="^8.0.0" />
 
-    <!-- إعدادات بيئة الأندرويد والإعلانات الإلزامية -->
     <platform name="android">
         <preference name="AndroidXEnabled" value="true" />
         <preference name="GradlePluginKotlinVersion" value="1.9.20" />
         <preference name="AndroidPersistentFileLocation" value="Compatibility" />
         
-        <!-- معرف تطبيق AdMob التجريبي (استبدله بمعرفك الحقيقي لاحقاً) -->
-        <preference name="ADMOB_APP_ID_ANDROID" value="ca-app-pub-3940256099942544~3347511713" />
+        <!-- صلاحيات نظام أندرويد الإجبارية لحفظ الفيديوهات في الذاكرة دون تجمّد -->
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+            <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+            <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+        </config-file>
+
+        <!-- معرف تطبيق AdMob الخاص بك ليفعل ظهور الإعلانات -->
+        <preference name="ADMOB_APP_ID_ANDROID" value="ca-app-pub-3620129121552586~4258571441" />
     </platform>
 </widget>
