@@ -1,25 +1,30 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.walid.aivideow" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
+<widget id="com.walid.aivideow" version="1.0.0" xmlns="http://apache.org">
     <name>ai video w</name>
-    <description>تطبيق صناعة وتوليد الفيديو الذكي مع دمج الإعلانات</description>
-    <author email="walidloussaif84@gmail.com">Walid Loussaif</author>
-    
+    <description>صناعة وتوليد الفيديو الذكي مع دمج الإعلانات</description>
+    <author email="walidloussaif84@gmail.com">Walid</author>
+
     <!-- الملف الرئيسي لتشغيل التطبيق -->
     <content src="index.html" />
-    
+
     <!-- إعدادات الوصول والشبكة -->
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-navigation href="*" />
 
-    <!-- مكتبات وإضافات الإعلانات المطلوبة لبناء الـ APK -->
-    <plugin name="cordova-plugin-admob-plus" spec="^1.0.0" />
-    <plugin name="cordova-plugin-unityads" spec="^1.0.0" />
+    <!-- مكتبات وإضافات الإعلانات والحفظ المطلوبة لبناء الـ APK -->
+    <plugin name="cordova-plugin-admob-plus" spec="^0.0.0" />
+    <plugin name="cordova-plugin-unityads" spec="^0.0.0" />
+    <plugin name="cordova-plugin-file" spec="^8.0.0" />
 
-    <!-- إعدادات بيئة الأندرويد -->
+    <!-- إعدادات بيئة الأندرويد والإعلانات الإلزامية -->
     <platform name="android">
         <preference name="AndroidXEnabled" value="true" />
-        <preference name="GradlePluginKotlinVersion" value="1.7.20" />
+        <preference name="GradlePluginKotlinVersion" value="1.9.20" />
+        <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+        
+        <!-- معرف تطبيق AdMob التجريبي (استبدله بمعرفك الحقيقي لاحقاً) -->
+        <preference name="ADMOB_APP_ID_ANDROID" value="ca-app-pub-3940256099942544~3347511713" />
     </platform>
 </widget>
