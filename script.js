@@ -10,9 +10,9 @@ function initUnityAds() {
         try {
             WTN.UnityAds.initialize({
                 gameId: unityGameId,
-                testMode: false
+                testMode: true
             });
-            console.log("Unity Ready ✅ via WTN");
+            console.log("Unity Ready ✅ via WTN (Test Mode Active)");
         } catch(e) { console.log("Unity Init Error:", e); }
     }
 }
@@ -149,3 +149,4 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
