@@ -1,25 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.aivideow.app" version="1.0.0" xmlns="http://w3.org">
-    
     <name>AI Video W</name>
     <description>AI Video Generator</description>
     <author email="dev@example.com">Developer</author>
-
     <content src="index.html" />
-
     <preference name="android-minSdkVersion" value="22" />
     <preference name="android-targetSdkVersion" value="34" />
-
     <access origin="*" />
     <allow-navigation href="*" />
-
-    <!-- إضافات نظيفة ومحدثة لضمان قبول السيرفر فوراً في المحاولة الأخيرة -->
     <plugin name="cordova-plugin-admob-free" />
     <plugin name="cordova-plugin-unityads" />
     <plugin name="cordova-plugin-file" />
-
     <platform name="android">
         <allow-intent href="market:*" />
     </platform>
-
 </widget>
