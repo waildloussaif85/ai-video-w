@@ -6,8 +6,16 @@
     <title>AI Video App</title>
     <link rel="stylesheet" href="style.css">
 
-    <!-- كود التحقق والربط الأساسي من Google AdSense -->
+    <!-- كود التحقق والربط الأساسي من Google AdSense للموقع -->
     <script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
+
+    <!-- 1. استدعاء وتفعيل مكتبة إعلانات Start.io الرسمية لتطبيق الـ APK -->
+    <script src="https://startapp.com" type="text/javascript"></script>
+    <script type="text/javascript">
+        StartAppSDK.init({
+            appId: "210770048"
+        });
+    </script>
 </head>
 <body>
 
@@ -147,6 +155,15 @@
         </div>
     </div>
 
+    <!-- 2. مساحة ظهور إعلان البانر النظيف لـ Start.io أسفل شاشات التطبيق كلياً -->
+    <div id="startapp-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; z-index: 9999; background: transparent;"></div>
+    <script type="text/javascript">
+        StartAppSDK.addBanner({
+            containerId: "startapp-banner",
+            bannerType: "STANDARD"
+        });
+    </script>
+
     <!-- ربط السكريبت بالاسم الجديد app.js لتفادي مشاكل الكاش -->
     <script src="cordova.js"></script>
     <script src="app.js"></script>
@@ -174,3 +191,6 @@
             }
         }
     </script>
+</body>
+</html>
+
