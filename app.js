@@ -1,8 +1,8 @@
 // @ts-nocheck
 /* eslint-disable */
 
-const unityGameId = "800419967";
-const unityPlacementId = "BP_Interstitial_Android";
+const unityGameId = "800429314";
+const unityPlacementId = "Interstitial_Android";
 const googleBannerId = "ca-app-pub-3620129121552586/4258571441";
 
 let ctx = null;
@@ -71,6 +71,7 @@ function drawFrame() {
             outputVideo.load();
             outputVideo.play();
         }
+        // يظهر الإعلان هنا فور انتهاء صناعة الفيديو
         showUnityAd();
         return;
     }
@@ -163,7 +164,6 @@ function onGenerateClick() {
         return;
     }
     
-    showUnityAd();
     isGenerating = true;
     chunks = [];
     document.getElementById("main-app-screen").style.display = "none";
@@ -178,7 +178,6 @@ function onGenerateClick() {
     let combinedStream = videoStream;
     let audioContext = null;
     
-    // تم إصلاح الشرط هنا ليعمل دمج الصوت في التحميل دائماً على الويب والهاتف دون قيود
     if (bgAudioPlayer.src) {
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
