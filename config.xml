@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.aivideow.app" version="1.0.0" xmlns="http://w3.org">
+<widget id="com.aivideow.app" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
     <name>AI Video W</name>
     <description>AI Video Generator</description>
     <author email="dev@example.com">Developer</author>
