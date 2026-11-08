@@ -4,30 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
-    
-    <!-- السطر المصلح: يعطي صلاحيات كاملة للموسيقى والألوان مع الحفاظ على الإعلانات -->
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob: gap: https://gstatic.com; media-src * blob: data:; style-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; connect-src * 'unsafe-inline' 'unsafe-eval';">
-    
     <link rel="stylesheet" href="style.css">
 
-    <!-- كود التحقق والربط الأساسي من Google AdSense -->
+    <!-- كود التحقق والربط الأساسي من Google AdSense للموقع -->
     <script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
-
-    <!-- استدعاء وتفعيل مكتبة إعلانات Start.io الرسمية لتطبيق الـ APK والموقع -->
-    <script src="https://startapp.com" type="text/javascript"></script>
-    <script type="text/javascript">
-        window.onload = function() {
-            if (typeof StartAppSDK !== 'undefined') {
-                StartAppSDK.init({
-                    appId: "210770048"
-                });
-                StartAppSDK.addBanner({
-                    containerId: "startapp-banner",
-                    bannerType: "STANDARD"
-                });
-            }
-        };
-    </script>
 </head>
 <body>
 
@@ -167,34 +147,48 @@
         </div>
     </div>
 
-    <!-- مساحة ظهور إعلان البانر النظيف لـ Start.io في أسفل الشاشة تماماً -->
-    <div id="startapp-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; z-index: 9999; background: transparent;"></div>
+    <!-- مساحة الإعلان المصلحة: استدعاء عبر iframe مباشر لمنع حظر المتصفحات والتطبيقات -->
+    <div id="startapp-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; text-align: center; z-index: 9999; background: #000; display: flex; justify-content: center; align-items: center;">
+        <iframe src="about:blank" id="ad-frame" style="width: 320px; height: 50px; border: none; scrolling: no; overflow: hidden;"></iframe>
+    </div>
 
     <!-- ربط السكريبت بالاسم الجديد app.js لتفادي مشاكل الكاش -->
     <script src="cordova.js"></script>
     <script src="app.js"></script>
 
-    <!-- سكربت التحكم في إعلانات التطبيق القديمة وتفادي تجميد الواجهة -->
-    <script>
-        document.addEventListener('deviceready', function() {
-            if (typeof unityads !== 'undefined') {
-                initUnityAds(); 
+    <!-- سكربت جلب الإعلان داخل الإطار المعزول تلقائياً لمنع التجميد والحظر -->
+    <script type="text/javascript">
+        window.addEventListener('load', function() {
+            var frame = document.getElementById('ad-frame');
+            if (frame) {
+                var doc = frame.contentDocument || frame.contentWindow.document;
+                doc.open();
+                doc.write('<html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"></head><body style="margin:0;padding:0;display:flex;justify-content:center;align-items:center;">' +
+                          '<script src="https://startapp.com" type="text/javascript"><\/script>' +
+                          '<div id="banner-box"><\/div>' +
+                          '<script type="text/javascript">' +
+                          'window.onload = function() {' +
+                          '    if(typeof StartAppSDK !== "undefined") {' +
+                          '        StartAppSDK.init({ appId: "210770048" });' +
+                          '        StartAppSDK.addBanner({ containerId: "banner-box", bannerType: "STANDARD" });' +
+                          '    }' +
+                          '};' +
+                          '<\/script><\/body><\/html>');
+                doc.close();
             }
+        });
+
+        document.addEventListener('deviceready', function() {
+            if (typeof unityads !== 'undefined') { initUnityAds(); }
             if (typeof admob !== 'undefined') {
-                admob.banner.show({
-                    id: 'ca-app-pub-3620129121...', 
-                    position: 'bottom'
-                }).catch(function() {});
+                admob.banner.show({ id: 'ca-app-pub-3620129121...', position: 'bottom' }).catch(function() {});
             }
         }, false);
 
         function onStartClicked() {
             document.getElementById('welcome-screen').style.display = 'none'; 
             document.getElementById('main-app-screen').style.display = 'block';
-
-            if (typeof unityads !== 'undefined') {
-                showUnityAd();
-            }
+            if (typeof unityads !== 'undefined') { showUnityAd(); }
         }
     </script>
 </body>
