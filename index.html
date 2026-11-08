@@ -4,17 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
+    
+    <!-- السطر المصلح: يعطي صلاحيات كاملة للموسيقى والألوان مع الحفاظ على الإعلانات -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob: gap: https://gstatic.com; media-src * blob: data:; style-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; connect-src * 'unsafe-inline' 'unsafe-eval';">
+    
     <link rel="stylesheet" href="style.css">
 
-    <!-- كود التحقق والربط الأساسي من Google AdSense للموقع -->
+    <!-- كود التحقق والربط الأساسي من Google AdSense -->
     <script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
 
-    <!-- 1. استدعاء وتفعيل مكتبة إعلانات Start.io الرسمية لتطبيق الـ APK -->
+    <!-- استدعاء وتفعيل مكتبة إعلانات Start.io الرسمية لتطبيق الـ APK والموقع -->
     <script src="https://startapp.com" type="text/javascript"></script>
     <script type="text/javascript">
-        StartAppSDK.init({
-            appId: "210770048"
-        });
+        window.onload = function() {
+            if (typeof StartAppSDK !== 'undefined') {
+                StartAppSDK.init({
+                    appId: "210770048"
+                });
+                StartAppSDK.addBanner({
+                    containerId: "startapp-banner",
+                    bannerType: "STANDARD"
+                });
+            }
+        };
     </script>
 </head>
 <body>
@@ -155,20 +167,14 @@
         </div>
     </div>
 
-    <!-- 2. مساحة ظهور إعلان البانر النظيف لـ Start.io أسفل شاشات التطبيق كلياً -->
+    <!-- مساحة ظهور إعلان البانر النظيف لـ Start.io في أسفل الشاشة تماماً -->
     <div id="startapp-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; z-index: 9999; background: transparent;"></div>
-    <script type="text/javascript">
-        StartAppSDK.addBanner({
-            containerId: "startapp-banner",
-            bannerType: "STANDARD"
-        });
-    </script>
 
     <!-- ربط السكريبت بالاسم الجديد app.js لتفادي مشاكل الكاش -->
     <script src="cordova.js"></script>
     <script src="app.js"></script>
 
-    <!-- سكربت التحكم في إعلانات التطبيق وتفادي تجميد الواجهة -->
+    <!-- سكربت التحكم في إعلانات التطبيق القديمة وتفادي تجميد الواجهة -->
     <script>
         document.addEventListener('deviceready', function() {
             if (typeof unityads !== 'undefined') {
