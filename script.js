@@ -53,11 +53,8 @@ function drawFrame() {
     const canvas = document.getElementById("videoCanvas");
     const outputVideo = document.getElementById("outputVideo");
     const mainTextInput = document.getElementById("main-c");
-    
-    // تصحيح جلب نصوص الأزرار الجانبية هنا لتعمل بنجاح
     const topLeftInput = document.getElementById("top-left-text");
-    const topRightInput = document.getElementById("top-right-text");
-    
+    const topRightInput = document.getElementById("main-r") || document.getElementById("top-right-text");
     const textSizeInput = document.getElementById("text-size");
     const totalDuration = loadedImages.length * durationPerImg * 1000;
     
@@ -102,7 +99,7 @@ function drawFrame() {
             ctx.shadowBlur = 0;
         }
         
-        ctx.font = "bold 40px sans-serif"; 
+        ctx.font = "bold 40px sans-serif";
         if (topLeftInput && topLeftInput.value) { ctx.textAlign = "left"; ctx.fillText(topLeftInput.value, 80, 200); }
         if (topRightInput && topRightInput.value) { ctx.textAlign = "right"; ctx.fillText(topRightInput.value, canvas.width - 80, 200); }
         ctx.restore();
@@ -181,6 +178,7 @@ function onGenerateClick() {
     let combinedStream = videoStream;
     let audioContext = null;
     
+    // تم إصلاح الشرط هنا ليعمل دمج الصوت في التحميل دائماً على الويب والهاتف دون قيود
     if (bgAudioPlayer.src) {
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -190,7 +188,7 @@ function onGenerateClick() {
             source.connect(audioContext.destination);
             const audioTracks = dest.stream.getAudioTracks();
             if (audioTracks.length > 0) {
-                videoStream.addTrack(audioTracks[0]); 
+                videoStream.addTrack(audioTracks[0]);
             }
             combinedStream = videoStream;
         } catch (err) {
