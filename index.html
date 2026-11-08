@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
     <link rel="stylesheet" href="style.css">
+
+    <!-- كود التحقق والربط الأساسي من Google AdSense -->
+    <script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -21,13 +24,24 @@
             </div>
             <h1 class="welcome-title">ai video w</h1>
             <p class="welcome-subtitle">Create TikToks & Reels in Seconds</p>
-            <!-- تم تعديل الزر ليشغل الإعلانات عند الانتقال للواجهة الرئيسية -->
             <button id="start-btn" class="start-btn" onclick="onStartClicked()">Start Creating 🚀</button>
         </div>
     </div>
 
     <!-- 2. الواجهة الرئيسية للتطبيق -->
     <div id="main-app-screen" class="screen" style="display: none;">
+        
+        <!-- حاوية الإعلان متموضعة تلقائياً في أعلى الصفحة الثانية في المنتصف -->
+        <div style="width: 100%; display: flex; justify-content: center; padding: 10px 0; min-height: 50px;">
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:320px;height:50px"
+                 data-ad-client="ca-pub-3620129121552586"
+                 data-ad-slot="4258571441"></ins>
+            <script>
+                 try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(err) {}
+            </script>
+        </div>
+
         <div class="app-card">
             <h1 class="main-title">ai video w</h1>
             <p class="sub-header">Ultimate AI Video Generator</p>
@@ -139,32 +153,24 @@
 
     <!-- سكربت التحكم في إعلانات التطبيق وتفادي تجميد الواجهة -->
     <script>
-        // إعداد الإعلانات عند تحميل التطبيق في Cordova
         document.addEventListener('deviceready', function() {
-            // 1. تهيئة Unity Ads
             if (typeof unityads !== 'undefined') {
                 initUnityAds(); 
             }
-            // 2. تهيئة إعلان البانر لـ AdMob تلقائياً في الأسفل
             if (typeof admob !== 'undefined') {
                 admob.banner.show({
-                    id: 'ca-app-pub-3620129121...', // سيقرأ المعرف من ملف app.js الخاص بك
+                    id: 'ca-app-pub-3620129121...', 
                     position: 'bottom'
-                }).catch(function(e) { console.log("AdMob Error: " + e); });
+                }).catch(function() {});
             }
         }, false);
 
-        // الدالة التي تعمل عند ضغط زر البداية لفتح الإعلانات البينية (Interstitial) والانتقال
         function onStartClicked() {
-            // الانتقال بين الواجهات
             document.getElementById('welcome-screen').style.display = 'none'; 
             document.getElementById('main-app-screen').style.display = 'block';
 
-            // إظهار إعلان Unity البيني إذا كان جاهزاً
             if (typeof unityads !== 'undefined') {
                 showUnityAd();
             }
         }
     </script>
-</body>
-</html>
