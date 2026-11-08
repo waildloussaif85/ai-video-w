@@ -1,10 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.waildloussa.aivideoproject" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org" xmlns:android="http://android.com">
-    <name>AI Video Project</name>
-    <description>تطبيق مشروع الفيديو والاعلانات</description>
-    <author email="waildloussaif85@gmail.com" href="https://github.com">
-        Wail Dloussa
-    </author>
+    <name>AI Video App</name>
+    <description>Application for AI Video</description>
+    <author email="waildloussaif85@gmail.com">Wail</author>
     
     <content src="index.html" />
     
@@ -13,10 +11,5 @@
     <allow-intent href="https://*/*" />
     <allow-navigation href="*" />
 
-    <!-- إضافات الإعلانات الأساسية -->
-    <plugin name="cordova-plugin-admob-plus" spec="^1.0.0" />
-    <plugin name="cordova-plugin-unityads" spec="^1.0.0" />
-
     <preference name="ScrollEnabled" value="false" />
-    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
 </widget>
