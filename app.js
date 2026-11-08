@@ -1,10 +1,6 @@
 // @ts-nocheck
 /* eslint-disable */
 
-const unityGameId = "800429314";
-const unityPlacementId = "Interstitial_Android";
-const googleBannerId = "ca-app-pub-3620129121552586/4258571441";
-
 let ctx = null;
 let loadedImages = [];
 let mediaRecorder = null;
@@ -16,33 +12,15 @@ bgAudioPlayer.loop = true;
 bgAudioPlayer.crossOrigin = "anonymous";
 window.videoStartTime = 0;
 
-function initUnityAds() {
-    if (typeof unityads !== 'undefined') {
-        unityads.init(unityGameId, false, function() {}, function(err) {});
-    }
-}
-
-function showUnityAd() {
-    if (typeof unityads !== 'undefined') {
-        unityads.show(unityPlacementId, function() {}, function(err) {});
-    }
-}
-
+// دالة حفظ الفيديو المخصصة لمتصفحات الويب المستضافة على Vercel
 function saveVideoToDevice(b, f) {
-    if (window.cordova && cordova.file) {
-        const t = cordova.file.externalRootDirectory || cordova.file.dataDirectory;
-        window.resolveLocalFileSystemURL(t, function (dir) {
-            dir.getFile(f, { create: true, exclusive: false }, function (e) {
-                e.createWriter(function (w) {
-                    w.onwriteend = function () { alert("تم حفظ الفيديو بنجاح! 📂"); };
-                    w.write(b);
-                });
-            });
-        }, function (e) { alert("خطأ في صلاحيات الحفظ"); });
-    } else {
-        const u = URL.createObjectURL(b), l = document.createElement('a');
-        l.href = u; l.download = f; document.body.appendChild(l); l.click(); document.body.removeChild(l);
-    }
+    const u = URL.createObjectURL(b);
+    const l = document.createElement('a');
+    l.href = u; 
+    l.download = f; 
+    document.body.appendChild(l); 
+    l.click(); 
+    document.body.removeChild(l);
 }
 
 function drawFrame() {
@@ -71,8 +49,6 @@ function drawFrame() {
             outputVideo.load();
             outputVideo.play();
         }
-        // يظهر الإعلان هنا فور انتهاء صناعة الفيديو
-        showUnityAd();
         return;
     }
     
@@ -108,11 +84,13 @@ function drawFrame() {
     animationFrameId = requestAnimationFrame(drawFrame);
 }
 
+// دالة معالجة ورفع الصور لمتصفح الويب المستضاف
 function onImageChange(e) {
     loadedImages = [];
     let files = e.target.files;
     let loadedCount = 0;
     if (!files || files.length === 0) return;
+    
     for (let i = 0; i < files.length; i++) {
         const reader = new FileReader();
         reader.onload = function(event) {
@@ -130,6 +108,7 @@ function onImageChange(e) {
     }
 }
 
+// دالة معالجة ورفع الموسيقى لمتصفح الويب المستضاف
 function onMusicChange(e) {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -140,7 +119,7 @@ function onMusicChange(e) {
             document.getElementById("file-status").innerText = "تم تحميل الموسيقى بنجاح 🎵";
         }
     };
-    reader.readAsDataURL(files[0]);
+    reader.readAsDataURL(files[0]); // تم تعديلها لتقرأ الملف الأول للمستعرض بنجاح
 }
 
 function onBackClick() {
@@ -151,6 +130,10 @@ function onBackClick() {
     bgAudioPlayer.currentTime = 0;
     document.getElementById("video-output-screen").style.display = "none";
     document.getElementById("main-app-screen").style.display = "block";
+    
+    // إعادة إطلاق إعلان AdSense التلقائي عند العودة
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(err) {}
+
     const outputVideo = document.getElementById("outputVideo");
     if (outputVideo) {
         outputVideo.pause();
@@ -187,7 +170,7 @@ function onGenerateClick() {
             source.connect(audioContext.destination);
             const audioTracks = dest.stream.getAudioTracks();
             if (audioTracks.length > 0) {
-                videoStream.addTrack(audioTracks[0]);
+                videoStream.addTrack(audioTracks[0]); // تم تعديلها لتسجيل الصوت للويب
             }
             combinedStream = videoStream;
         } catch (err) {
@@ -236,19 +219,19 @@ function onGenerateClick() {
     drawFrame();
 }
 
-document.addEventListener("deviceready", function() {
-    if (typeof admob !== 'undefined') {
-        try {
-            admob.banner.config({ id: googleBannerId, autoShow: true });
-            admob.banner.prepare();
-        } catch (e) {
-            console.log(e);
-        }
-    }
-    initUnityAds();
-}, false);
+// دالة تشغيل الزر الترحيبي الأصلي والانتقال المباشر للويب مع تفعيل البانر
+function onStartClicked() {
+    document.getElementById('welcome-screen').style.display = 'none'; 
+    document.getElementById('main-app-screen').style.display = 'block';
+    
+    // استدعاء البانر التلقائي من AdSense للويب عند الدخول للشاشة الرئيسية
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+}
 
-if (document.getElementById("image-input")) document.getElementById("image-input").onchange = onImageChange;
-if (document.getElementById("music-input")) document.getElementById("music-input").onchange = onMusicChange;
-if (document.getElementById("back-btn")) document.getElementById("back-btn").onclick = onBackClick;
-if (document.getElementById("generate-btn")) document.getElementById("generate-btn").onclick = onGenerateClick;
+// تأكيد ربط عناصر الـ DOM بالأحداث عند تحميل الصفحة
+document.addEventListener("DOMContentLoaded", function() {
+    if (document.getElementById("image-input")) document.getElementById("image-input").onchange = onImageChange;
+    if (document.getElementById("music-input")) document.getElementById("music-input").onchange = onMusicChange;
+    if (document.getElementById("back-btn")) document.getElementById("back-btn").onclick = onBackClick;
+    if (document.getElementById("generate-btn")) document.getElementById("generate-btn").onclick = onGenerateClick;
+});
