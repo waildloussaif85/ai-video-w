@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.waildloussa.aivideoproject" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
+<widget id="com.waildloussa.aivideoproject" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org" xmlns:android="http://android.com">
     <name>AI Video Project</name>
     <description>تطبيق مشروع الفيديو والاعلانات</description>
     <author email="waildloussaif85@gmail.com" href="https://github.com">
@@ -13,7 +13,7 @@
     <allow-intent href="https://*/*" />
     <allow-navigation href="*" />
 
-    <!-- إضافات (Plugins) الإعلانات الضرورية لبناء الكود بدون مشاكل وظهور الإعلانات -->
+    <!-- إضافات الإعلانات الأساسية -->
     <plugin name="cordova-plugin-admob-plus" spec="^1.0.0" />
     <plugin name="cordova-plugin-unityads" spec="^1.0.0" />
 
