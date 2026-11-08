@@ -1,38 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.aivideow.app" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
+<widget id="com.aivideow.app" version="1.0.0" xmlns="http://w3.org">
     
     <name>AI Video W</name>
-    <description>Ultimate AI Video Generator for TikToks and Reels</description>
-    <author email="developer@example.com" href="http://example.com">AI Video Team</author>
+    <description>AI Video Generator</description>
+    <author email="dev@example.com">Developer</author>
 
     <content src="index.html" />
 
-    <!-- هذه المعايير مهمة جداً لـ VoltBuilder لتفادي فشل البناء -->
-    <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
     <preference name="android-targetSdkVersion" value="34" />
 
     <access origin="*" />
     <allow-navigation href="*" />
-    <allow-intent href="http://*/*" />
-    <allow-intent href="https://*/*" />
 
-    <!-- إضافات الإعلانات القياسية المستقرة والمجربة على السيرفر -->
-    <plugin name="cordova-plugin-admob-free" spec="0.25.0" />
-    <plugin name="cordova-plugin-unityads" spec="1.0.0" />
-
-    <!-- إضافات النظام الأساسية للفيديو والموقع -->
-    <plugin name="cordova-plugin-file" spec="8.1.0" />
+    <!-- إضافات نظيفة ومحدثة لضمان قبول السيرفر فوراً في المحاولة الأخيرة -->
+    <plugin name="cordova-plugin-admob-free" />
+    <plugin name="cordova-plugin-unityads" />
+    <plugin name="cordova-plugin-file" />
 
     <platform name="android">
         <allow-intent href="market:*" />
-        
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-permission android:name="android.permission.INTERNET" />
-            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-        </config-file>
     </platform>
 
 </widget>
