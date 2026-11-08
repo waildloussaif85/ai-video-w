@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.aivideow.app" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
+    
+    <!-- اسم التطبيق والوصف -->
+    <name>AI Video W</name>
+    <description>Ultimate AI Video Generator for TikToks and Reels</description>
+    <author email="developer@example.com" href="http://example.com">AI Video Team</author>
+
+    <!-- الصفحة الرئيسية للتطبيق -->
+    <content src="index.html" />
+
+    <!-- إعدادات الأندرويد الأساسية متوافقة مع VoltBuilder -->
+    <preference name="ScrollEnabled" value="false" />
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <preference name="android-minSdkVersion" value="22" />
+    <preference name="android-targetSdkVersion" value="34" />
+
+    <!-- صلاحيات الاتصال بالإنترنت وجلب الإعلانات وتخطي الحظر -->
+    <access origin="*" />
+    <allow-navigation href="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+
+    <!-- 1. إضافات الإعلانات القياسية لـ Cordova (المستدعاة في كود الـ JavaScript) -->
+    <plugin name="cordova-plugin-admob-free" spec="^0.25.0" />
+    <plugin name="cordova-plugin-unityads" spec="^1.0.0" />
+
+    <!-- 2. إضافات النظام لحفظ ملفات الفيديو وقراءتها من ذاكرة الهاتف -->
+    <plugin name="cordova-plugin-file" spec="^8.1.0" />
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.5" />
+
+    <platform name="android">
+        <allow-intent href="market:*" />
+        
+        <!-- تعديل صلاحيات الأندرويد الداخلية للسماح بالكتابة والقراءة -->
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+        </config-file>
+    </platform>
+
+</widget>
