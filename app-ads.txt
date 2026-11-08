@@ -1,2 +1,1 @@
-unity3d.com, 800429314, DIRECT
 google.com, pub-3620129121552586, DIRECT, f08c47fec0942fa0
