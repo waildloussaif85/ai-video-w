@@ -12,7 +12,7 @@ bgAudioPlayer.loop = true;
 bgAudioPlayer.crossOrigin = "anonymous";
 window.videoStartTime = 0;
 
-// دالة حفظ الفيديو المخصصة لمتصفحات الويب المستضافة على Vercel
+// دالة حفظ الفيديو المخصصة لمتصفحات الويب المستضافة على Vercel والهاتف
 function saveVideoToDevice(b, f) {
     const u = URL.createObjectURL(b);
     const l = document.createElement('a');
@@ -84,7 +84,7 @@ function drawFrame() {
     animationFrameId = requestAnimationFrame(drawFrame);
 }
 
-// دالة معالجة ورفع الصور لمتصفح الويب المستضاف
+// دالة معالجة ورفع الصور
 function onImageChange(e) {
     loadedImages = [];
     let files = e.target.files;
@@ -108,7 +108,7 @@ function onImageChange(e) {
     }
 }
 
-// دالة معالجة ورفع الموسيقى لمتصفح الويب المستضاف
+// دالة معالجة ورفع الموسيقى
 function onMusicChange(e) {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -119,7 +119,7 @@ function onMusicChange(e) {
             document.getElementById("file-status").innerText = "تم تحميل الموسيقى بنجاح 🎵";
         }
     };
-    reader.readAsDataURL(files[0]); // تم تعديلها لتقرأ الملف الأول للمستعرض بنجاح
+    reader.readAsDataURL(files[0]);
 }
 
 function onBackClick() {
@@ -130,9 +130,6 @@ function onBackClick() {
     bgAudioPlayer.currentTime = 0;
     document.getElementById("video-output-screen").style.display = "none";
     document.getElementById("main-app-screen").style.display = "block";
-    
-    // إعادة إطلاق إعلان AdSense التلقائي عند العودة
-    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(err) {}
 
     const outputVideo = document.getElementById("outputVideo");
     if (outputVideo) {
@@ -170,7 +167,7 @@ function onGenerateClick() {
             source.connect(audioContext.destination);
             const audioTracks = dest.stream.getAudioTracks();
             if (audioTracks.length > 0) {
-                videoStream.addTrack(audioTracks[0]); // تم تعديلها لتسجيل الصوت للويب
+                videoStream.addTrack(audioTracks[0]);
             }
             combinedStream = videoStream;
         } catch (err) {
@@ -219,13 +216,10 @@ function onGenerateClick() {
     drawFrame();
 }
 
-// دالة تشغيل الزر الترحيبي الأصلي والانتقال المباشر للويب مع تفعيل البانر
+// دالة تشغيل الزر الترحيبي الأصلي والانتقال المباشر للوحة التحكم بسلاسة
 function onStartClicked() {
     document.getElementById('welcome-screen').style.display = 'none'; 
     document.getElementById('main-app-screen').style.display = 'block';
-    
-    // استدعاء البانر التلقائي من AdSense للويب عند الدخول للشاشة الرئيسية
-    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
 }
 
 // تأكيد ربط عناصر الـ DOM بالأحداث عند تحميل الصفحة
