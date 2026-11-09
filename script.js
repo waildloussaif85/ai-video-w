@@ -12,7 +12,6 @@ bgAudioPlayer.loop = true;
 bgAudioPlayer.crossOrigin = "anonymous";
 window.videoStartTime = 0;
 
-// دالة حفظ الفيديو المخصصة لمتصفحات الويب المستضافة على Vercel والهاتف
 function saveVideoToDevice(b, f) {
     const u = URL.createObjectURL(b);
     const l = document.createElement('a');
@@ -32,7 +31,7 @@ function drawFrame() {
     const outputVideo = document.getElementById("outputVideo");
     const mainTextInput = document.getElementById("main-c");
     const topLeftInput = document.getElementById("top-left-text");
-    const topRightInput = document.getElementById("main-r") || document.getElementById("top-right-text");
+    const topRightInput = document.getElementById("top-right-text");
     const textSizeInput = document.getElementById("text-size");
     const totalDuration = loadedImages.length * durationPerImg * 1000;
     
@@ -84,7 +83,6 @@ function drawFrame() {
     animationFrameId = requestAnimationFrame(drawFrame);
 }
 
-// دالة معالجة ورفع الصور
 function onImageChange(e) {
     loadedImages = [];
     let files = e.target.files;
@@ -108,7 +106,6 @@ function onImageChange(e) {
     }
 }
 
-// دالة معالجة ورفع الموسيقى
 function onMusicChange(e) {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -216,13 +213,11 @@ function onGenerateClick() {
     drawFrame();
 }
 
-// دالة تشغيل الزر الترحيبي الأصلي والانتقال المباشر للوحة التحكم بسلاسة
 function onStartClicked() {
     document.getElementById('welcome-screen').style.display = 'none'; 
     document.getElementById('main-app-screen').style.display = 'block';
 }
 
-// تأكيد ربط عناصر الـ DOM بالأحداث عند تحميل الصفحة
 document.addEventListener("DOMContentLoaded", function() {
     if (document.getElementById("image-input")) document.getElementById("image-input").onchange = onImageChange;
     if (document.getElementById("music-input")) document.getElementById("music-input").onchange = onMusicChange;
