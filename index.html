@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <!-- 1. واجهة الترحيب -->
+    <!-- 1. واجهة Tرحيب -->
     <div id="welcome-screen" class="screen active">
         <div class="welcome-container">
             <div class="clapperboard-icon">
@@ -28,10 +28,9 @@
     <!-- 2. الواجهة الرئيسية للتطبيق -->
     <div id="main-app-screen" class="screen" style="display: none;">
         
-        <!-- حاوية الإعلان متموضعة تلقائياً في أعلى الصفحة الثانية في المنتصف -->
+        <!-- حاوية الإعلان متموضعة في أعلى الصفحة الثانية في المنتصف -->
         <div style="width: 100%; display: flex; justify-content: center; padding: 10px 0; min-height: 50px;">
-          <iframe src="about:blank" id="ad-frame" style="width: 320px; height: 50px; border: none; overflow: hidden;"></iframe>
-
+            <div id="startio-banner"></div>
         </div>
 
         <div class="app-card">
@@ -139,37 +138,195 @@
         </div>
     </div>
 
-    <!-- ربط السكريبت بالاسم الجديد app.js لتفادي مشاكل الكاش -->
-    <script src="cordova.js"></script>
     <script src="script.js"></script>
 
-    <!-- سكربت جلب الإعلان داخل الإطار المعزول تلقائياً لمنع التجميد والحظر -->
+    <!-- سكربت تفعيل إعلانات الموبايل المخصصة للويب داخل التطبيق -->
     <script type="text/javascript">
-        window.addEventListener('load', function() {
-            var frame = document.getElementById('ad-frame');
-            if (frame) {
-                var doc = frame.contentDocument || frame.contentWindow.document;
-                doc.open();
-                doc.write('<html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"></head><body style="margin:0;padding:0;display:flex;justify-content:center;align-items:center;">' +
-                          '<script src="https://startapp.com" type="text/javascript"><\/script>' +
-                          '<div id="banner-box"><\/div>' +
-                          '<script type="text/javascript">' +
-                          'window.onload = function() {' +
-                          '    if(typeof StartAppSDK !== "undefined") {' +
-                          '        StartAppSDK.init({ appId: "210770048" });' +
-                          '        StartAppSDK.addBanner({ containerId: "banner-box", bannerType: "STANDARD" });' +
-                          '    }' +
-                          '};' +
-                          '<\/script><\/body><\/html>');
-                doc.close();
-            }
-        });
-
         function onStartClicked() {
             document.getElementById('welcome-screen').style.display = 'none'; 
             document.getElementById('main-app-screen').style.display = 'block';
+
+            // تحميل إعلان Start.io للويب تزامناً مع دخول صفحة الأزرار
+            if (!document.getElementById('startapp-js')) {
+                var script = document.createElement('script');
+                script.id = 'startapp-js';
+                script.src = 'https://startapp.com';
+                script.type = 'text/javascript';
+                script.onload = function() {
+                    if (typeof StartAppSDK !== 'undefined') {
+                        StartAppSDK.init({ appId: '210770048' });
+                        StartAppSDK.addBanner({ containerId: 'startio-banner', bannerType: 'STANDARD' });
+                    }
+                };
+                document.body.appendChild(script);
+            }
         }
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+    <!-- 1. واجهة Tرحيب -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome-container">
+            <div class="clapperboard-icon">
+                <div class="clapper-top"></div>
+                <div class="clapper-bottom">
+                    <span>DIRECTOR</span>
+                    <span>CAMERA</span>
+                    <span>DATE</span>
+                </div>
+            </div>
+            <h1 class="welcome-title">ai video w</h1>
+            <p class="welcome-subtitle">Create TikToks & Reels in Seconds</p>
+            <button id="start-btn" class="start-btn" onclick="onStartClicked()">Start Creating 🚀</button>
+        </div>
+    </div>
+
+    <!-- 2. الواجهة الرئيسية للتطبيق -->
+    <div id="main-app-screen" class="screen" style="display: none;">
+        
+        <!-- حاوية الإعلان متموضعة في أعلى الصفحة الثانية في المنتصف -->
+        <div style="width: 100%; display: flex; justify-content: center; padding: 10px 0; min-height: 50px;">
+            <div id="startio-banner"></div>
+        </div>
+
+        <div class="app-card">
+            <h1 class="main-title">ai video w</h1>
+            <p class="sub-header">Ultimate AI Video Generator</p>
+
+            <div class="input-group">
+                <label>Center Main Text:</label>
+                <input type="text" id="main-c" placeholder="Fhjkkbbvcv">
+            </div>
+
+            <div class="row">
+                <div class="input-group half">
+                    <label>Top-Left Text:</label>
+                    <input type="text" id="top-left-text" placeholder="Ttuijvcy">
+                </div>
+                <div class="input-group half">
+                    <label>Top-Right Text:</label>
+                    <input type="text" id="top-right-text" placeholder="Jjhggh">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-group half">
+                    <label>Text Size:</label>
+                    <input type="range" id="text-size" min="20" max="100" value="50">
+                    <span class="slider-value">Dynamic Scale</span>
+                </div>
+                <div class="input-group half">
+                    <label>Transition Delay:</label>
+                    <input type="range" id="durationPerImg" min="1" max="10" value="3">
+                    <span class="slider-value">3s / Image</span>
+                </div>
+            </div>
+
+            <div class="checkbox-grid">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="neon-glow" checked>
+                    <span class="checkmark"></span> Neon Glow Typing
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="ken-burns" checked>
+                    <span class="checkmark"></span> Cinematic Ken-Burns
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="blurred-bg" checked>
+                    <span class="checkmark"></span> Smart Blurred BG
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="dust-overlay" checked>
+                    <span class="checkmark"></span> Dust Particles Overlay
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="audio-waves" checked>
+                    <span class="checkmark"></span> Audio Sound Waves
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="cross-fade" checked>
+                    <span class="checkmark"></span> Cross-Fade Effect
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="glitch-filter" checked>
+                    <span class="checkmark"></span> 3D Glitch Filter
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="bounce-anim" checked>
+                    <span class="checkmark"></span> Bounce Text Animation
+                </label>
+            </div>
+
+            <div class="color-picker-row">
+                <div class="color-picker-item">
+                    <input type="color" id="text-color-picker" value="#ffffff">
+                    <label for="text-color-picker">Text</label>
+                </div>
+                <div class="color-picker-item">
+                    <input type="color" id="neon-color-picker" value="#ff007f">
+                    <label for="neon-color-picker">Neon Glow</label>
+                </div>
+            </div>
+
+            <div class="row button-row" style="display: flex; gap: 10px; justify-content: center;">
+                <label for="image-input" class="upload-btn" id="upload-images-btn" style="display: inline-block; cursor: pointer; text-align: center;">Upload Images 📸</label>
+                <label for="music-input" class="upload-btn" id="upload-music-btn" style="display: inline-block; cursor: pointer; text-align: center;">Upload Music 🎵</label>
+                <input type="file" id="image-input" multiple accept="image/*" style="position: absolute; left: -9999px; opacity: 0;">
+                <input type="file" id="music-input" accept="audio/*" style="position: absolute; left: -9999px; opacity: 0;">
+            </div>
+
+            <p id="file-status" class="file-status">No files selected yet</p>
+            <button id="generate-btn" class="generate-btn">Generate & Compile Masterpiece ⚡</button>
+        </div>
+    </div>
+
+    <!-- 3. شاشة النتيجة النهائية وعرض الفيديو -->
+    <div id="video-output-screen" class="screen" style="display: none;">
+        <div class="app-card video-card">
+            <div class="video-preview-wrapper">
+                <canvas id="videoCanvas" style="display: none;"></canvas>
+                <video id="outputVideo" autoplay controls playsinline loop></video>
+            </div>
+            <div class="action-buttons-row">
+                <a id="download-btn" class="app-btn download-btn" style="display: none;">Download Video 📥</a>
+                <button id="back-btn" class="app-btn back-btn">Back ↩️</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <!-- سكربت تفعيل إعلانات الموبايل المخصصة للويب داخل التطبيق -->
+    <script type="text/javascript">
+        function onStartClicked() {
+            document.getElementById('welcome-screen').style.display = 'none'; 
+            document.getElementById('main-app-screen').style.display = 'block';
+
+            // تحميل إعلان Start.io للويب تزامناً مع دخول صفحة الأزرار
+            if (!document.getElementById('startapp-js')) {
+                var script = document.createElement('script');
+                script.id = 'startapp-js';
+                script.src = 'https://startapp.com';
+                script.type = 'text/javascript';
+                script.onload = function() {
+                    if (typeof StartAppSDK !== 'undefined') {
+                        StartAppSDK.init({ appId: '210770048' });
+                        StartAppSDK.addBanner({ containerId: 'startio-banner', bannerType: 'STANDARD' });
+                    }
+                };
+                document.body.appendChild(script);
+            }
+        }
+    </script>
+</body>
+</html>
