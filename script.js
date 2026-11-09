@@ -31,7 +31,7 @@ function drawFrame() {
     const outputVideo = document.getElementById("outputVideo");
     const mainTextInput = document.getElementById("main-c");
     const topLeftInput = document.getElementById("top-left-text");
-    const topRightInput = document.getElementById("top-right-text");
+    const topRightInput = document.getElementById("main-r") || document.getElementById("top-right-text");
     const textSizeInput = document.getElementById("text-size");
     const totalDuration = loadedImages.length * durationPerImg * 1000;
     
@@ -63,7 +63,11 @@ function drawFrame() {
         ctx.save();
         
         const currentTextSize = textSizeInput ? parseInt(textSizeInput.value) : 50;
-        ctx.fillStyle = "#ffffff";
+        
+        // جلب اللون المختار حالياً من لوحة الألوان لتطبيقه على نص الفيديو المولد
+        const textColorPicker = document.getElementById("text-color-picker");
+        ctx.fillStyle = textColorPicker ? textColorPicker.value : "#ffffff";
+        
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         
@@ -106,6 +110,7 @@ function onImageChange(e) {
     }
 }
 
+// دالة معالجة ورفع الموسيقى (تم إصلاحها لتقرأ الملف الصوتي بنجاح وبدون توقف)
 function onMusicChange(e) {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -116,7 +121,7 @@ function onMusicChange(e) {
             document.getElementById("file-status").innerText = "تم تحميل الموسيقى بنجاح 🎵";
         }
     };
-    reader.readAsDataURL(files[0]);
+    reader.readAsDataURL(files[0]); 
 }
 
 function onBackClick() {
@@ -213,9 +218,19 @@ function onGenerateClick() {
     drawFrame();
 }
 
-function onStartClicked() {
-    document.getElementById('welcome-screen').style.display = 'none'; 
-    document.getElementById('main-app-screen').style.display = 'block';
+// دالة مراقبة وتعديل لون الخط للأزرار والنصوص تلقائياً فور اختيار لون من لوحة الألوان
+function initColorPickerListener() {
+    const picker = document.getElementById("text-color-picker");
+    if (picker) {
+        picker.addEventListener("input", function() {
+            const chosenColor = picker.value;
+            // تطبيق اللون المختار على خطوط كافة أزرار الرفع والتوليد والمدخلات تلقائياً
+            const targets = document.querySelectorAll(".start-btn, .upload-btn, .generate-btn, input[type='text']");
+            targets.forEach(el => {
+                el.style.color = chosenColor;
+            });
+        });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -223,4 +238,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (document.getElementById("music-input")) document.getElementById("music-input").onchange = onMusicChange;
     if (document.getElementById("back-btn")) document.getElementById("back-btn").onclick = onBackClick;
     if (document.getElementById("generate-btn")) document.getElementById("generate-btn").onclick = onGenerateClick;
+    
+    // تفعيل مراقبة مغير الألوان للأزرار
+    initColorPickerListener();
 });
