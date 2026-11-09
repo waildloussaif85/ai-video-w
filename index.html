@@ -5,11 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- كود حماية لمنع تداخل الواجهات وتثبيت الخلفية الداكنة -->
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0f19 !important;
+            color: #ffffff;
+        }
+        #welcome-screen {
+            display: block; /* واجهة الترحيب تظهر أولاً */
+        }
+        #main-app-screen {
+            display: none; /* واجهة الأزرار مخفية تماماً في البداية */
+        }
+        #video-output-screen {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- 1. واجهة Tرحيب -->
-    <div id="welcome-screen" class="screen active">
+    <!-- 1. واجهة الترحيب -->
+    <div id="welcome-screen" class="screen">
         <div class="welcome-container">
             <div class="clapperboard-icon">
                 <div class="clapper-top"></div>
@@ -25,12 +44,12 @@
         </div>
     </div>
 
-    <!-- 2. الواجهة الرئيسية للتطبيق -->
-    <div id="main-app-screen" class="screen" style="display: none;">
+    <!-- 2. الواجهة الرئيسية للتطبيق (صفحة الأزرار) -->
+    <div id="main-app-screen" class="screen">
         
-        <!-- حاوية الإعلان متموضعة في أعلى الصفحة الثانية في المنتصف -->
-        <div style="width: 100%; display: flex; justify-content: center; padding: 10px 0; min-height: 50px;">
-            <div id="startio-banner"></div>
+        <!-- حاوية الإعلان متموضعة تلقائياً في أعلى الصفحة الثانية في المنتصف تماماً بملء الشاشة وبدون حواف بيضاء -->
+        <div style="width: 100%; display: flex; justify-content: center; padding: 10px 0; min-height: 50px; background: transparent;">
+            <iframe src="about:blank" id="ad-frame" style="width: 320px; height: 50px; border: none; overflow: hidden; background: transparent;"></iframe>
         </div>
 
         <div class="app-card">
@@ -125,7 +144,7 @@
     </div>
 
     <!-- 3. شاشة النتيجة النهائية وعرض الفيديو -->
-    <div id="video-output-screen" class="screen" style="display: none;">
+    <div id="video-output-screen" class="screen">
         <div class="app-card video-card">
             <div class="video-preview-wrapper">
                 <canvas id="videoCanvas" style="display: none;"></canvas>
@@ -138,30 +157,36 @@
         </div>
     </div>
 
+    <!-- استدعاء ملف الـ سكريبت الأصلي النظيف الخاص بك -->
     <script src="script.js"></script>
 
-    <!-- سكربت تفعيل إعلانات الموبايل المخصصة للويب داخل التطبيق -->
     <script type="text/javascript">
+        // دالة حقن كود Start.io داخل الـ iframe بشكل مستقل ومخفي الخلفية تماماً لمنع التجميد وحظر التطبيقات
+        window.addEventListener('load', function() {
+            var frame = document.getElementById('ad-frame');
+            if (frame) {
+                var doc = frame.contentDocument || frame.contentWindow.document;
+                doc.open();
+                doc.write('<html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"></head><body style="margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;">' +
+                          '<script src="https://startapp.com" type="text/javascript"><\/script>' +
+                          '<div id="banner-box"><\/div>' +
+                          '<script type="text/javascript">' +
+                          'window.onload = function() {' +
+                          '    if(typeof StartAppSDK !== "undefined") {' +
+                          '        StartAppSDK.init({ appId: "210770048" });' +
+                          '        StartAppSDK.addBanner({ containerId: "banner-box", bannerType: "STANDARD" });' +
+                          '    }' +
+                          '};' +
+                          '<\/script><\/body><\/html>');
+                doc.close();
+            }
+        });
+
+        // دالة الانتقال الصافية والصحيحة تضمن إخفاء الشاشة الأولى تماماً وإظهار الثانية بشكل سليم
         function onStartClicked() {
             document.getElementById('welcome-screen').style.display = 'none'; 
             document.getElementById('main-app-screen').style.display = 'block';
-
-            // تحميل إعلان Start.io للويب تزامناً مع دخول صفحة الأزرار
-            if (!document.getElementById('startapp-js')) {
-                var script = document.createElement('script');
-                script.id = 'startapp-js';
-                script.src = 'https://startapp.com';
-                script.type = 'text/javascript';
-                script.onload = function() {
-                    if (typeof StartAppSDK !== 'undefined') {
-                        StartAppSDK.init({ appId: '210770048' });
-                        StartAppSDK.addBanner({ containerId: 'startio-banner', bannerType: 'STANDARD' });
-                    }
-                };
-                document.body.appendChild(script);
-            }
         }
     </script>
 </body>
 </html>
-
