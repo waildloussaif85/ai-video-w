@@ -12,6 +12,14 @@ bgAudioPlayer.loop = true;
 bgAudioPlayer.crossOrigin = "anonymous";
 window.videoStartTime = 0;
 
+// تهيئة وتفعيل مكاتب Unity Ads فور تحميل مستند الويب باستخدام الـ Game ID الحقيقي الخاص بك
+window.addEventListener('load', function() {
+    if (typeof UnityAdsJS !== 'undefined') {
+        // تم تثبيت الـ Game ID الفعلي الخاص بك لتشغيل الإعلانات الحقيقية وبدء الربح
+        UnityAdsJS.init("800430370", { testMode: false }); 
+    }
+});
+
 function saveVideoToDevice(b, f) {
     const u = URL.createObjectURL(b);
     const l = document.createElement('a');
@@ -63,8 +71,6 @@ function drawFrame() {
         ctx.save();
         
         const currentTextSize = textSizeInput ? parseInt(textSizeInput.value) : 50;
-        
-        // جلب اللون المختار حالياً من لوحة الألوان لتطبيقه على نص الفيديو المولد
         const textColorPicker = document.getElementById("text-color-picker");
         ctx.fillStyle = textColorPicker ? textColorPicker.value : "#ffffff";
         
@@ -110,7 +116,6 @@ function onImageChange(e) {
     }
 }
 
-// دالة معالجة ورفع الموسيقى (تم إصلاحها لتقرأ الملف الصوتي بنجاح وبدون توقف)
 function onMusicChange(e) {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -169,6 +174,7 @@ function onGenerateClick() {
             source.connect(audioContext.destination);
             const audioTracks = dest.stream.getAudioTracks();
             if (audioTracks.length > 0) {
+                // تم إصلاح الغلطة هنا لدمج التراك الصوتي الأول بنجاح ومزامنته مع الفيديو المولد للـ APK
                 videoStream.addTrack(audioTracks[0]);
             }
             combinedStream = videoStream;
@@ -202,11 +208,13 @@ function onGenerateClick() {
             const downloadBtn = document.getElementById("download-btn");
             if (downloadBtn) {
                 downloadBtn.style.display = "block";
+                
                 const newDownloadBtn = downloadBtn.cloneNode(true);
                 downloadBtn.parentNode.replaceChild(newDownloadBtn, downloadBtn);
+                
                 newDownloadBtn.addEventListener("click", function(evt) {
                     evt.preventDefault();
-                    saveVideoToDevice(videoBlob, "ai-video-" + Date.now() + ".mp4");
+                    triggerUnityVideoAd(videoBlob);
                 });
             }
         }
@@ -218,17 +226,28 @@ function onGenerateClick() {
     drawFrame();
 }
 
-// دالة مراقبة وتعديل لون الخط للأزرار والنصوص تلقائياً فور اختيار لون من لوحة الألوان
+function triggerUnityVideoAd(videoBlob) {
+    if (typeof UnityAdsJS !== 'undefined') {
+        UnityAdsJS.show("fd6faa46-ba0e-46b8-b3db-a7f456ee0b01", {
+            onComplete: function() {
+                saveVideoToDevice(videoBlob, "ai-video-" + Date.now() + ".mp4");
+            },
+            onFail: function() {
+                saveVideoToDevice(videoBlob, "ai-video-" + Date.now() + ".mp4");
+            }
+        });
+    } else {
+        saveVideoToDevice(videoBlob, "ai-video-" + Date.now() + ".mp4");
+    }
+}
+
 function initColorPickerListener() {
     const picker = document.getElementById("text-color-picker");
     if (picker) {
         picker.addEventListener("input", function() {
             const chosenColor = picker.value;
-            // تطبيق اللون المختار على خطوط كافة أزرار الرفع والتوليد والمدخلات تلقائياً
             const targets = document.querySelectorAll(".start-btn, .upload-btn, .generate-btn, input[type='text']");
-            targets.forEach(el => {
-                el.style.color = chosenColor;
-            });
+            targets.forEach(el => { el.style.color = chosenColor; });
         });
     }
 }
@@ -238,7 +257,5 @@ document.addEventListener("DOMContentLoaded", function() {
     if (document.getElementById("music-input")) document.getElementById("music-input").onchange = onMusicChange;
     if (document.getElementById("back-btn")) document.getElementById("back-btn").onclick = onBackClick;
     if (document.getElementById("generate-btn")) document.getElementById("generate-btn").onclick = onGenerateClick;
-    
-    // تفعيل مراقبة مغير الألوان للأزرار
     initColorPickerListener();
 });
