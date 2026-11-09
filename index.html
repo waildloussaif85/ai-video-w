@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
     <link rel="stylesheet" href="style.css">
-
-    <!-- كود التحقق والربط الأساسي من Google AdSense للموقع -->
-    <script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -33,13 +30,8 @@
         
         <!-- حاوية الإعلان متموضعة تلقائياً في أعلى الصفحة الثانية في المنتصف -->
         <div style="width: 100%; display: flex; justify-content: center; padding: 10px 0; min-height: 50px;">
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:320px;height:50px"
-                 data-ad-client="ca-pub-3620129121552586"
-                 data-ad-slot="4258571441"></ins>
-            <script>
-                 try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(err) {}
-            </script>
+          <iframe src="about:blank" id="ad-frame" style="width: 320px; height: 50px; border: none; overflow: hidden;"></iframe>
+
         </div>
 
         <div class="app-card">
@@ -147,14 +139,9 @@
         </div>
     </div>
 
-    <!-- مساحة الإعلان المصلحة: استدعاء عبر iframe مباشر لمنع حظر المتصفحات والتطبيقات -->
-    <div id="startapp-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; text-align: center; z-index: 9999; background: #000; display: flex; justify-content: center; align-items: center;">
-        <iframe src="about:blank" id="ad-frame" style="width: 320px; height: 50px; border: none; scrolling: no; overflow: hidden;"></iframe>
-    </div>
-
     <!-- ربط السكريبت بالاسم الجديد app.js لتفادي مشاكل الكاش -->
     <script src="cordova.js"></script>
-    <script src="app.js"></script>
+    <script src="script.js"></script>
 
     <!-- سكربت جلب الإعلان داخل الإطار المعزول تلقائياً لمنع التجميد والحظر -->
     <script type="text/javascript">
@@ -178,17 +165,9 @@
             }
         });
 
-        document.addEventListener('deviceready', function() {
-            if (typeof unityads !== 'undefined') { initUnityAds(); }
-            if (typeof admob !== 'undefined') {
-                admob.banner.show({ id: 'ca-app-pub-3620129121...', position: 'bottom' }).catch(function() {});
-            }
-        }, false);
-
         function onStartClicked() {
             document.getElementById('welcome-screen').style.display = 'none'; 
             document.getElementById('main-app-screen').style.display = 'block';
-            if (typeof unityads !== 'undefined') { showUnityAd(); }
         }
     </script>
 </body>
