@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- استدعاء ملف التصميم الأصلي الخاص بك مع إلغاء الكاش تماماً برقم إصدار جديد -->
+    <link rel="stylesheet" href="style.css?v=3000">
     <style>
+        /* كود حماية لتثبيت ألوان تطبيقك السوداء وإخفاء الصفحات الإضافية في البداية */
         body, html {
             margin: 0;
             padding: 0;
@@ -32,14 +34,15 @@
             </div>
             <h1 class="welcome-title">ai video w</h1>
             <p class="welcome-subtitle">Create TikToks & Reels in Seconds</p>
-            <button id="start-btn" class="start-btn" onclick="onStartClicked()">Start Creating 🚀</button>
+            <!-- الزر الآن مبرمج مباشرة للانتقال الفوري دون انتظار السكريبت -->
+            <button id="start-btn" class="start-btn" onclick="document.getElementById('welcome-screen').style.display='none'; document.getElementById('main-app-screen').style.display='block';">Start Creating 🚀</button>
         </div>
     </div>
 
     <!-- 2. الواجهة الرئيسية للتطبيق (صفحة الأزرار) -->
     <div id="main-app-screen" class="screen">
         
-        <!-- مساحة إعلانية مستقلة في أعلى صفحة الأزرار بالمنتصف تماماً -->
+        <!-- مساحة إعلانية معزولة ومضمونة في أعلى صفحة الأزرار بالمنتصف تماماً وبدون حواف بيضاء -->
         <div style="width: 100%; display: flex; justify-content: center; padding: 10px 0; min-height: 50px; background: transparent;">
             <iframe src="about:blank" id="ad-frame" style="width: 320px; height: 50px; border: none; overflow: hidden; background: transparent;"></iframe>
         </div>
@@ -149,9 +152,11 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- استدعاء ملف الـ سكريبت النظيف مع إلغاء الكاش تماماً برقم إصدار جديد -->
+    <script src="script.js?v=3000"></script>
 
     <script type="text/javascript">
+        // دالة تفعيل إعلانات لـ Start.io داخل الإطار المعزول بخلفية شفافة لتتناسب مع تصميمك
         window.addEventListener('load', function() {
             var frame = document.getElementById('ad-frame');
             if (frame) {
@@ -174,4 +179,3 @@
     </script>
 </body>
 </html>
-
