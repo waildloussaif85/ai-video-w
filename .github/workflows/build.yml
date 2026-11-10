@@ -27,7 +27,7 @@ jobs:
     - name: Install Cordova
       run: npm install -g cordova
 
-    - name: Create Project
+    - name: Create Cordova Project
       run: |
         cordova create cordova_project com.waildloussaif.aivideow "AIVideoW"
         cd cordova_project
@@ -36,12 +36,12 @@ jobs:
         cp ../style.css www/
         cp ../script.js www/
         cp ../app-ads.txt www/
-        cp ../config.xml www/
-        cordova platform add android --json
-        cordova build android --device --release --no-telemetry
+        cp ../config.xml .
+        cordova platform add android
+        cordova build android --release --no-telemetry
 
-    - name: Upload APK Artifact
-      uses: actions/artifact@v4
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
       with:
-        name: my-app-apk
+        name: my-application-apk
         path: cordova_project/platforms/android/app/build/outputs/apk/release/*.apk
