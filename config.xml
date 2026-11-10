@@ -1,19 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
-<widget id="com.waildloussaif.aivideow" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
-    <name>AI Video W</name>
-    <description>AI Video Application</description>
-    <author email="wail@example.com" href="http://example.com">Wail</author>
-    
-    <content src="index.html" />
-    <access origin="*" />
-    <allow-intent href="http://*/*" />
-    <allow-intent href="https://*/*" />
-    
-    <!-- إضافات الإعلانات لـ Start.io و Unity -->
-    <plugin name="cordova-plugin-startapp" />
-    <plugin name="cordova-plugin-unityads" />
+<access origin="*" />
+<allow-navigation href="*" />
+<allow-intent href="market:*" />
 
-    <preference name="android-minSdkVersion" value="22" />
-    <preference name="android-targetSdkVersion" value="34" />
-</widget>
-
+<plugin name="cordova-plugin-unityads" spec="^2.0.0" />
+<plugin name="cordova-plugin-startapp" spec="^1.0.0" />
+<plugin name="cordova-plugin-file" spec="^8.0.0" />
