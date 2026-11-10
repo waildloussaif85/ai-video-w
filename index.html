@@ -4,12 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
-    <!-- استدعاء ملف التصميم الأصلي الخاص بك مع إلغاء الكاش برقم إصدار جديد لضمان قراءة الألوان -->
     <link rel="stylesheet" href="style.css?v=6000">
-    
-    <!-- جلب سكريبت Unity Ads المخصص لتشغيل الفيديوهات داخل تطبيقات الـ Web View -->
-    <script src="https://unity3d.com" async></script>
-    
     <style>
         body, html {
             margin: 0;
@@ -20,8 +15,6 @@
         #welcome-screen { display: block; }
         #main-app-screen { display: none; }
         #video-output-screen { display: none; }
-        
-        /* حاوية مخصصة للإعلان في الأعلى لضمان عدم حجب محتوى الصفحة الثانية */
         .ad-header-wrapper {
             width: 100%;
             height: 60px;
@@ -49,18 +42,13 @@
             </div>
             <h1 class="welcome-title">ai video w</h1>
             <p class="welcome-subtitle">Create TikToks & Reels in Seconds</p>
-            <button id="start-btn" class="start-btn" onclick="document.getElementById('welcome-screen').style.display='none'; document.getElementById('main-app-screen').style.display='block';">Start Creating 🚀</button>
+            <button id="start-btn" class="start-btn" onclick="document.getElementById('welcome-screen').style.display='none'; document.getElementById('main-app-screen').style.display='block'; showTopBanner();">Start Creating 🚀</button>
         </div>
     </div>
 
-    <!-- 2. الواجهة الرئيسية للتطبيق (صفحة الأزرار - تحتوي على إعلان Start.io علوي ثابت) -->
+    <!-- 2. الواجهة الرئيسية (صفحة الإعدادات والميديا) -->
     <div id="main-app-screen" class="screen">
-        
-        <!-- مساحة إعلان البانر المخصصة لـ Start.io في الأعلى (منفصلة ومحمية من التغطية) -->
-        <div class="ad-header-wrapper">
-            <iframe src="about:blank" id="ad-frame" style="width: 320px; height: 50px; border: none; overflow: hidden; background: transparent;"></iframe>
-        </div>
-
+        <div class="ad-header-wrapper"></div>
         <div class="app-card">
             <h1 class="main-title">ai video w</h1>
             <p class="sub-header">Ultimate AI Video Generator</p>
@@ -95,56 +83,27 @@
             </div>
 
             <div class="checkbox-grid">
-                <label class="checkbox-container">
-                    <input type="checkbox" id="neon-glow" checked>
-                    <span class="checkmark"></span> Neon Glow Typing
-                </label>
-                <label class="checkbox-container">
-                    <input type="checkbox" id="ken-burns" checked>
-                    <span class="checkmark"></span> Cinematic Ken-Burns
-                </label>
-                <label class="checkbox-container">
-                    <input type="checkbox" id="blurred-bg" checked>
-                    <span class="checkmark"></span> Smart Blurred BG
-                </label>
-                <label class="checkbox-container">
-                    <input type="checkbox" id="dust-overlay" checked>
-                    <span class="checkmark"></span> Dust Particles Overlay
-                </label>
-                <label class="checkbox-container">
-                    <input type="checkbox" id="audio-waves" checked>
-                    <span class="checkmark"></span> Audio Sound Waves
-                </label>
-                <label class="checkbox-container">
-                    <input type="checkbox" id="cross-fade" checked>
-                    <span class="checkmark"></span> Cross-Fade Effect
-                </label>
-                <label class="checkbox-container">
-                    <input type="checkbox" id="glitch-filter" checked>
-                    <span class="checkmark"></span> 3D Glitch Filter
-                </label>
-                <label class="checkbox-container">
-                    <input type="checkbox" id="bounce-anim" checked>
-                    <span class="checkmark"></span> Bounce Text Animation
-                </label>
+                <label class="checkbox-container"><input type="checkbox" id="neon-glow" checked><span class="checkmark"></span> Neon Glow Typing</label>
+                <label class="checkbox-container"><input type="checkbox" id="ken-burns" checked><span class="checkmark"></span> Cinematic Ken-Burns</label>
+                <label class="checkbox-container"><input type="checkbox" id="blurred-bg" checked><span class="checkmark"></span> Smart Blurred BG</label>
+                <label class="checkbox-container"><input type="checkbox" id="dust-overlay" checked><span class="checkmark"></span> Dust Particles Overlay</label>
+                <label class="checkbox-container"><input type="checkbox" id="audio-waves" checked><span class="checkmark"></span> Audio Sound Waves</label>
+                <label class="checkbox-container"><input type="checkbox" id="cross-fade" checked><span class="checkmark"></span> Cross-Fade Effect</label>
+                <label class="checkbox-container"><input type="checkbox" id="glitch-filter" checked><span class="checkmark"></span> 3D Glitch Filter</label>
+                <label class="checkbox-container"><input type="checkbox" id="bounce-anim" checked><span class="checkmark"></span> Bounce Text Animation</label>
             </div>
 
             <div class="color-picker-row">
-                <div class="color-picker-item">
-                    <input type="color" id="text-color-picker" value="#ffffff">
-                    <label for="text-color-picker">Text</label>
-                </div>
-                <div class="color-picker-item">
-                    <input type="color" id="neon-color-picker" value="#ff007f">
-                    <label for="neon-color-picker">Neon Glow</label>
-                </div>
+                <div class="color-picker-item"><input type="color" id="text-color-picker" value="#ffffff"><label for="text-color-picker">Text</label></div>
+                <div class="color-picker-item"><input type="color" id="neon-color-picker" value="#ff007f"><label for="neon-color-picker">Neon Glow</label></div>
             </div>
 
+            <!-- أزرار الاختيار native لفتح ملفات الذاكرة بشكل سليم دون تجمد -->
             <div class="row button-row" style="display: flex; gap: 10px; justify-content: center;">
-                <label for="image-input" class="upload-btn" id="upload-images-btn" style="display: inline-block; cursor: pointer; text-align: center;">Upload Images 📸</label>
-                <label for="music-input" class="upload-btn" id="upload-music-btn" style="display: inline-block; cursor: pointer; text-align: center;">Upload Music 🎵</label>
-                <input type="file" id="image-input" multiple accept="image/*" style="position: absolute; left: -9999px; opacity: 0;">
-                <input type="file" id="music-input" accept="audio/*" style="position: absolute; left: -9999px; opacity: 0;">
+                <button type="button" class="upload-btn" onclick="document.getElementById('image-input').click();">Upload Images 📸</button>
+                <button type="button" class="upload-btn" onclick="document.getElementById('music-input').click();">Upload Music 🎵</button>
+                <input type="file" id="image-input" multiple accept="image/*" style="display: none;">
+                <input type="file" id="music-input" accept="audio/*" style="display: none;">
             </div>
 
             <p id="file-status" class="file-status">No files selected yet</p>
@@ -152,45 +111,33 @@
         </div>
     </div>
 
-    <!-- 3. شاشة النتيجة النهائية وعرض الفيديو (تحتوي على زر الحفظ المرتبط بـ Unity Ads) -->
+    <!-- 3. شاشة عرض النتيجة -->
     <div id="video-output-screen" class="screen">
         <div class="app-card video-card">
             <div class="video-preview-wrapper">
                 <canvas id="videoCanvas" style="display: none;"></canvas>
                 <video id="outputVideo" autoplay controls playsinline loop></video>
             </div>
-            
             <div class="action-buttons-row">
                 <a id="download-btn" class="app-btn download-btn" style="display: none;">Download Video 📥</a>
-                <button id="back-btn" class="app-btn back-btn">Back ↩️</button>
+                <button id="back-btn" class="app-btn back-btn" onclick="hideTopBanner();">Back ↩️</button>
             </div>
         </div>
     </div>
 
-    <!-- استدعاء ملف تشغيل العمليات والميديا الأساسي الخاص بك -->
+    <!-- استدعاء مكاتب الهاتف الأصلية قبل الكود البرمجي -->
+    <script src="cordova.js"></script>
     <script src="script.js?v=6000"></script>
 
     <script type="text/javascript">
-        // كود تشغيل وحقن إعلان البانر لـ Start.io في أعلى الصفحة الثانية تلقائياً
-        window.addEventListener('load', function() {
-            var frame = document.getElementById('ad-frame');
-            if (frame) {
-                var doc = frame.contentDocument || frame.contentWindow.document;
-                doc.open();
-                doc.write('<html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"></head><body style="margin:0;padding:0;display:flex;justify-content:center;align-items:center;background:transparent;">' +
-                          '<script src="https://startapp.com" type="text/javascript"><\/script>' +
-                          '<div id="banner-box"><\/div>' +
-                          '<script type="text/javascript">' +
-                          'window.onload = function() {' +
-                          '    if(typeof StartAppSDK !== "undefined") {' +
-                          '        StartAppSDK.init({ appId: "210770048" });' +
-                          '        StartAppSDK.addBanner({ containerId: "banner-box", bannerType: "STANDARD" });' +
-                          '    }' +
-                          '};' +
-                          '<\/script><\/body><\/html>');
-                doc.close();
-            }
-        });
+        function showTopBanner() {
+            if (typeof startapp !== 'undefined') { startapp.showBanner(); }
+        }
+        function hideTopBanner() {
+            if (typeof startapp !== 'undefined') { startapp.hideBanner(); }
+            document.getElementById('video-output-screen').style.display='none'; 
+            document.getElementById('welcome-screen').style.display='block';
+        }
     </script>
 </body>
 </html>
