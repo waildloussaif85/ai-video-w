@@ -29,22 +29,25 @@ jobs:
 
     - name: Create and Build Project
       run: |
-        cordova create cordova_project com.waildloussaif.aivideow "AIVideoW"
+        cordova create cordova_project com.waildloussa.aivideow "AI Video W"
         cd cordova_project
         rm -rf www/*
         cp ../index.html www/
-        cp ../style.css www/
         cp ../script.js www/
-        cp ../app-ads.txt www/
-        cp ../config.xml .
-        cordova platform add android
-        cordova build android --debug --no-telemetry
+        cp ../style.css www/
         
-        # نسخ أي ملف APK ناتج إلى المجلد الرئيسي لتسهيل العثور عليه
-        find . -name "*.apk" -exec cp {} ../app-debug.apk \;
+        # 🛑 الحل الجذري: نسخ ملف config.xml المصلح الخاص بك من المستودع بدلاً من الافتراضي
+        cp ../config.xml .
+        
+        cordova platform add android
+        cordova build android --release
 
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
+    # 🔗 توليد رابط دائم للجميع عبر رفع الملف مباشرة كإصدار (Release)
+    - name: Create Tag and Release Build
+      uses: softprops/action-gh-release@v2
       with:
-        name: my-application-apk
-        path: app-debug.apk
+        tag_name: v1.0.${{ github.run_number }}
+        name: AI Video W v1.0.${{ github.run_number }}
+        files: cordova_project/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
