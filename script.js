@@ -12,13 +12,14 @@ bgAudioPlayer.loop = true;
 bgAudioPlayer.crossOrigin = "anonymous";
 window.videoStartTime = 0;
 
-// تهيئة وتفعيل مكاتب Unity Ads فور تحميل مستند الويب باستخدام الـ Game ID الحقيقي الخاص بك
-window.addEventListener('load', function() {
-    if (typeof UnityAdsJS !== 'undefined') {
-        // تم تثبيت الـ Game ID الفعلي الخاص بك لتشغيل الإعلانات الحقيقية وبدء الربح
-        UnityAdsJS.init("800430370", { testMode: false }); 
+document.addEventListener('deviceready', function() {
+    if (typeof unityAds !== 'undefined') {
+        unityAds.initialize("800430370", false);
     }
-});
+    if (typeof startapp !== 'undefined') {
+        startapp.init("210770048");
+    }
+}, false);
 
 function saveVideoToDevice(b, f) {
     const u = URL.createObjectURL(b);
@@ -39,7 +40,7 @@ function drawFrame() {
     const outputVideo = document.getElementById("outputVideo");
     const mainTextInput = document.getElementById("main-c");
     const topLeftInput = document.getElementById("top-left-text");
-    const topRightInput = document.getElementById("main-r") || document.getElementById("top-right-text");
+    const topRightInput = document.getElementById("top-right-text");
     const textSizeInput = document.getElementById("text-size");
     const totalDuration = loadedImages.length * durationPerImg * 1000;
     
@@ -47,7 +48,9 @@ function drawFrame() {
     
     if (elapsed >= totalDuration) {
         isGenerating = false;
-        if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+            mediaRecorder.stop();
+        }
         bgAudioPlayer.pause();
         if (chunks.length > 0) {
             const videoBlob = new Blob(chunks, { type: 'video/mp4' });
@@ -86,16 +89,21 @@ function drawFrame() {
         }
         
         ctx.font = "bold 40px sans-serif";
-        if (topLeftInput && topLeftInput.value) { ctx.textAlign = "left"; ctx.fillText(topLeftInput.value, 80, 200); }
-        if (topRightInput && topRightInput.value) { ctx.textAlign = "right"; ctx.fillText(topRightInput.value, canvas.width - 80, 200); }
+        if (topLeftInput && topLeftInput.value) { 
+            ctx.textAlign = "left"; 
+            ctx.fillText(topLeftInput.value, 80, 200); 
+        }
+        if (topRightInput && topRightInput.value) { 
+            ctx.textAlign = "right"; 
+            ctx.fillText(topRightInput.value, canvas.width - 80, 200); 
+        }
         ctx.restore();
     }
     animationFrameId = requestAnimationFrame(drawFrame);
 }
 
-function onImageChange(e) {
+function handleImages(files) {
     loadedImages = [];
-    let files = e.target.files;
     let loadedCount = 0;
     if (!files || files.length === 0) return;
     
@@ -116,8 +124,7 @@ function onImageChange(e) {
     }
 }
 
-function onMusicChange(e) {
-    const files = e.target.files;
+function handleMusic(files) {
     if (!files || files.length === 0) return;
     const reader = new FileReader();
     reader.onload = function(event) {
@@ -126,13 +133,15 @@ function onMusicChange(e) {
             document.getElementById("file-status").innerText = "تم تحميل الموسيقى بنجاح 🎵";
         }
     };
-    reader.readAsDataURL(files[0]); 
+    reader.readAsDataURL(files[0]);
 }
 
 function onBackClick() {
     isGenerating = false;
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
-    if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+    }
     bgAudioPlayer.pause();
     bgAudioPlayer.currentTime = 0;
     document.getElementById("video-output-screen").style.display = "none";
@@ -174,7 +183,6 @@ function onGenerateClick() {
             source.connect(audioContext.destination);
             const audioTracks = dest.stream.getAudioTracks();
             if (audioTracks.length > 0) {
-                // تم إصلاح الغلطة هنا لدمج التراك الصوتي الأول بنجاح ومزامنته مع الفيديو المولد للـ APK
                 videoStream.addTrack(audioTracks[0]);
             }
             combinedStream = videoStream;
@@ -199,7 +207,9 @@ function onGenerateClick() {
     
     mediaRecorder = new MediaRecorder(combinedStream, options);
     mediaRecorder.ondataavailable = function(e) {
-        if (e.data.size > 0) chunks.push(e.data);
+        if (e.data.size > 0) {
+            chunks.push(e.data);
+        }
     };
     
     mediaRecorder.onstop = function() {
@@ -208,17 +218,17 @@ function onGenerateClick() {
             const downloadBtn = document.getElementById("download-btn");
             if (downloadBtn) {
                 downloadBtn.style.display = "block";
-                
                 const newDownloadBtn = downloadBtn.cloneNode(true);
                 downloadBtn.parentNode.replaceChild(newDownloadBtn, downloadBtn);
-                
                 newDownloadBtn.addEventListener("click", function(evt) {
                     evt.preventDefault();
                     triggerUnityVideoAd(videoBlob);
                 });
             }
         }
-        if (audioContext) audioContext.close();
+        if (audioContext) {
+            audioContext.close();
+        }
     };
     
     mediaRecorder.start();
@@ -227,35 +237,44 @@ function onGenerateClick() {
 }
 
 function triggerUnityVideoAd(videoBlob) {
-    if (typeof UnityAdsJS !== 'undefined') {
-        UnityAdsJS.show("fd6faa46-ba0e-46b8-b3db-a7f456ee0b01", {
-            onComplete: function() {
+    if (typeof unityAds !== 'undefined') {
+        unityAds.show("fd6faa46-ba0e-46b8-b3db-a7f456ee0b01", {
+            onSuccess: function() {
                 saveVideoToDevice(videoBlob, "ai-video-" + Date.now() + ".mp4");
             },
-            onFail: function() {
+            onError: function(err) {
                 saveVideoToDevice(videoBlob, "ai-video-" + Date.now() + ".mp4");
             }
+        });
+    } else if (typeof startapp !== 'undefined') {
+        startapp.showInterstitial(function() {
+            saveVideoToDevice(videoBlob, "ai-video-" + Date.now() + ".mp4");
+        }, function() {
+            saveVideoToDevice(videoBlob, "ai-video-" + Date.now() + ".mp4");
         });
     } else {
         saveVideoToDevice(videoBlob, "ai-video-" + Date.now() + ".mp4");
     }
 }
 
-function initColorPickerListener() {
-    const picker = document.getElementById("text-color-picker");
-    if (picker) {
-        picker.addEventListener("input", function() {
-            const chosenColor = picker.value;
-            const targets = document.querySelectorAll(".start-btn, .upload-btn, .generate-btn, input[type='text']");
-            targets.forEach(el => { el.style.color = chosenColor; });
+document.addEventListener("DOMContentLoaded", function() {
+    const imgInp = document.getElementById("image-input");
+    if (imgInp) {
+        imgInp.addEventListener("change", function(e) { 
+            handleImages(e.target.files); 
         });
     }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    if (document.getElementById("image-input")) document.getElementById("image-input").onchange = onImageChange;
-    if (document.getElementById("music-input")) document.getElementById("music-input").onchange = onMusicChange;
-    if (document.getElementById("back-btn")) document.getElementById("back-btn").onclick = onBackClick;
-    if (document.getElementById("generate-btn")) document.getElementById("generate-btn").onclick = onGenerateClick;
-    initColorPickerListener();
+    const musInp = document.getElementById("music-input");
+    if (musInp) {
+        musInp.addEventListener("change", function(e) { 
+            handleMusic(e.target.files); 
+        });
+    }
+    if (document.getElementById("back-btn")) {
+        document.getElementById("back-btn").onclick = onBackClick;
+    }
+    if (document.getElementById("generate-btn")) {
+        document.getElementById("generate-btn").onclick = onGenerateClick;
+    }
 });
+
