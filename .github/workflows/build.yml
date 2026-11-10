@@ -29,16 +29,14 @@ jobs:
 
     - name: Create Cordova Android Project
       run: |
-        mkdir cordova_project
+        cordova create cordova_project com.waildloussaif.aivideow "AI Video W"
         cd cordova_project
-        cordova create app com.waildloussaif.aivideow "AI Video W"
-        cd app
         rm -rf www/*
-        cp -r ../../index.html www/
-        cp -r ../../style.css www/
-        cp -r ../../script.js www/
-        cp -r ../../app-ads.txt www/
-        cp ../../config.xml .
+        cp -r ../index.html www/
+        cp -r ../style.css www/
+        cp -r ../script.js www/
+        cp -r ../app-ads.txt www/
+        cp ../config.xml .
         cordova platform add android
         cordova build android --no-telemetry --release
 
@@ -46,4 +44,4 @@ jobs:
       uses: actions/artifact@v4
       with:
         name: app-release-unsigned-apk
-        path: cordova_project/app/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+        path: cordova_project/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
