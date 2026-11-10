@@ -44,4 +44,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: my-application-apk
-        path: cordova_project/platforms/android/app/build/outputs/apk/release/*.apk
+        path: '**/*.apk'
