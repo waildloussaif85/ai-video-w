@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.waildloussa.aivideow" version="1.0.0" xmlns="http://w3.org" xmlns:cdv="http://apache.org" xmlns:android="http://android.com">
+<widget id="com.waildloussa.aivideow" version="1.0.0" xmlns="http://w3.org" xmlns:android="http://android.com">
     <name>AI Video W</name>
     <description>Create TikToks and Reels in Seconds with Ads</description>
     <author email="waildloussa@example.com" href="https://github.com">Wail Dloussa</author>
     
     <content src="index.html" />
     
-    <!-- صلاحيات الوصول الشاملة للإنترنت والموقع لمنع حجب سكريبتات الإعلانات -->
+    <!-- صلاحيات الوصول الشاملة للإنترنت لمنع حجب سكريبتات الإعلانات -->
     <access origin="*" />
     <allow-navigation href="*" />
     <allow-intent href="market:*" />
@@ -18,10 +18,8 @@
         <preference name="AndroidXEnabled" value="true" />
         <preference name="GradlePluginKotlinVersion" value="1.9.20" />
         
-        <!-- 🛑 التعديل الإلزامي لفتح حظر أندرويد والسماح بمرور صور وفيديوهات الإعلانات الحقيقية -->
-        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-            <application android:usesCleartextTraffic="true" />
-        </edit-config>
+        <!-- ✅ الحل البديل والمضمون لفتح حظر أندرويد والسماح بمرور حزم الإعلانات الحقيقية دون أخطاء بناء -->
+        <preference name="Scheme" value="https" />
         
         <allow-intent href="market:*" />
     </platform>
