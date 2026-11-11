@@ -41,10 +41,14 @@ jobs:
         cp ../config.xml .
         cordova platform add android
         
-        # إضافة المكتبات الرسمية لـ Unity Ads و Start.io
+        # 1. إضافة مستودع Start.io الرسمي في إعدادات Gradle الحديثة
+        sed -i 's/mavenCentral()/mavenCentral()\n        maven { url "https:\/\/://startapp.com" }/g' platforms/android/settings.gradle || true
+        sed -i 's/mavenCentral()/mavenCentral()\n        maven { url "https:\/\/://startapp.com" }/g' platforms/android/build.gradle || true
+
+        # 2. إضافة مكتبات Unity Ads و Start.io الرسمية
         sed -i '/dependencies {/a \    implementation "com.unity3d.ads:unity-ads:4.12.0"\n    implementation "com.startapp:inapp-sdk:5.0.2"' platforms/android/app/build.gradle
 
-        # كتابة كود الجافا الصحيح والمتوافق لربط الإعلانات بالتطبيق
+        # 3. كتابة كود الجافا لربط أرقامك الحقيقية بواجهة التطبيق
         cat << 'EOF' > platforms/android/app/src/main/java/com/waildloussa/aivideow/MainActivity.java
         package com.waildloussa.aivideow;
 
