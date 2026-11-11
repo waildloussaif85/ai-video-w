@@ -3,20 +3,14 @@
     <name>AI Video W</name>
     <description>Create TikToks and Reels in Seconds</description>
     <author email="waildloussa@example.com" href="https://github.com">Wail Dloussa</author>
-    
     <content src="index.html" />
-    
-    <!-- صلاحيات الوصول الشاملة للإنترنت لجلب الإعلانات -->
     <access origin="*" />
     <allow-navigation href="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
-
     <platform name="android">
         <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidInsecureFileModeEnabled" value="true" />
-        <allow-intent href="market:*" />
     </platform>
-
     <preference name="Orientation" value="portrait" />
 </widget>
