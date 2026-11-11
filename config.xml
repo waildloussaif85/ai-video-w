@@ -1,34 +1,27 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.waildloussa.aivideow" version="1.0.0" xmlns="http://w3.org" xmlns:android="http://android.com">
     <name>AI Video W</name>
-    <description>Create TikToks and Reels in Seconds with Ads</description>
+    <description>Create TikToks and Reels in Seconds</description>
     <author email="waildloussa@example.com" href="https://github.com">Wail Dloussa</author>
     
     <content src="index.html" />
     
-    <!-- صلاحيات الوصول الشاملة للإنترنت لمنع حجب سكريبتات الإعلانات -->
+    <!-- صلاحيات الوصول الشاملة للإنترنت -->
     <access origin="*" />
     <allow-navigation href="*" />
-    <allow-intent href="market:*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
 
-    <!-- إعدادات منصة الأندرويد وصلاحيات الحماية الحقيقية للإعلانات والميديا -->
     <platform name="android">
         <preference name="AndroidXEnabled" value="true" />
-        <preference name="GradlePluginKotlinVersion" value="1.9.20" />
-        
-        <!-- ✅ الحل البديل والمضمون لفتح حظر أندرويد والسماح بمرور حزم الإعلانات الحقيقية دون أخطاء بناء -->
         <preference name="Scheme" value="https" />
-        
         <allow-intent href="market:*" />
     </platform>
 
-    <!-- 🔌 المكاتب الرسمية (Plugins) المسؤولة عن حقن وإظهار الإعلانات وفتح ملفات الهاتف نهائياً -->
-    <plugin name="cordova-plugin-unityads" spec="^2.0.0" />
-    <plugin name="cordova-plugin-startapp" spec="^1.0.0" />
-    <plugin name="cordova-plugin-file" spec="^8.0.0" />
-    <plugin name="cordova-plugin-androidx-adapter" spec="^1.1.3" />
+    <!-- إضافات كوردوفا الحديثة والمستقرة فقط -->
+    <plugin name="cordova-plugin-unityads" spec="latest" />
+    <plugin name="cordova-plugin-startapp-ads" spec="latest" />
+    <plugin name="cordova-plugin-file" spec="latest" />
 
     <preference name="Orientation" value="portrait" />
 </widget>
