@@ -13,7 +13,6 @@ bgAudioPlayer.crossOrigin = "anonymous";
 window.videoStartTime = 0;
 window.pendingVideoBlob = null;
 
-// دالة الحفظ الفعلية في مجلد Downloads بعد انتهاء إعلان Unity
 window.executeVideoSave = function() {
     const videoBlob = window.pendingVideoBlob;
     if (!videoBlob) return;
@@ -106,13 +105,13 @@ function handleImages(files) {
             const status = document.getElementById("file-status");
             if (status) status.innerText = "تم تحميل " + loadedCount + " صور بنجاح 📸";
         };
-        img.src = URL.createObjectURL(files[i]);
+        img.src = URL.createObjectURL(files.item(i));
     }
 }
 
 function handleMusic(files) {
     if (!files || files.length === 0) return;
-    const audioFile = files[0];
+    const audioFile = files.item(0);
     bgAudioPlayer.src = URL.createObjectURL(audioFile);
     bgAudioPlayer.load();
     const status = document.getElementById("file-status");
@@ -129,7 +128,6 @@ function onBackClick() {
     document.getElementById("video-output-screen").style.display = "none";
     document.getElementById("main-app-screen").style.display = "block";
     
-    // إعادة إظهار بانر Start.io في المساحة العلوية للصفحة الثانية
     if (typeof AndroidAds !== 'undefined') {
         AndroidAds.showTopBanner();
     }
@@ -147,7 +145,6 @@ function onGenerateClick() {
         return;
     }
     
-    // إخفاء البانر العلوي أثناء عرض الفيديو
     if (typeof AndroidAds !== 'undefined') {
         AndroidAds.hideTopBanner();
     }
@@ -226,8 +223,6 @@ function onGenerateClick() {
             const downloadBtn = document.getElementById("download-btn");
             if (downloadBtn) {
                 downloadBtn.style.display = "block";
-                
-                // ربط زر الحفظ بإعلان Unity Ads
                 downloadBtn.onclick = function(evt) {
                     evt.preventDefault();
                     if (typeof AndroidAds !== 'undefined') {
@@ -252,8 +247,6 @@ document.addEventListener("DOMContentLoaded", function() {
         startBtn.onclick = function() {
             document.getElementById("welcome-screen").style.display = "none";
             document.getElementById("main-app-screen").style.display = "block";
-            
-            // إظهار بانر Start.io في المساحة العلوية للصفحة الثانية
             if (typeof AndroidAds !== 'undefined') {
                 AndroidAds.showTopBanner();
             }
