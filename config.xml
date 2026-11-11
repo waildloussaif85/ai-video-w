@@ -4,14 +4,19 @@
     <description>Create TikToks and Reels in Seconds</description>
     <author email="waildloussa@example.com" href="https://github.com">Wail Dloussa</author>
     <content src="index.html" />
+    
+    <!-- صلاحيات الوصول الشاملة للإنترنت لتحميل الإعلانات -->
     <access origin="*" />
     <allow-navigation href="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
+    <allow-intent href="market:*" />
+
+    <!-- إعدادات منصة الأندرويد للوصول إلى الصور والموسيقى والتوافق الحديث -->
     <platform name="android">
         <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidInsecureFileModeEnabled" value="true" />
     </platform>
+
     <preference name="Orientation" value="portrait" />
 </widget>
-
