@@ -41,7 +41,6 @@ jobs:
         cp ../config.xml .
         cordova platform add android
         
-        # الاعتماد على مكتبة Start.io فقط للبانر والفيديو بمكافأة
         printf "repositories {\n mavenCentral()\n google()\n}\ndependencies {\n implementation 'com.startapp:inapp-sdk:5.0.2'\n}\n" > platforms/android/app/build-extras.gradle
 
         cat << 'EOF' > platforms/android/app/src/main/java/com/waildloussa/aivideow/MainActivity.java
@@ -65,25 +64,22 @@ jobs:
         import com.startapp.sdk.adsbase.StartAppSDK;
         import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener;
         import com.startapp.sdk.adsbase.adlisteners.AdEventListener;
-        import com.startapp.sdk.adsbase.adlisteners.VideoListener;
 
         public class MainActivity extends CordovaActivity {
             private Banner startAppBanner;
             private FrameLayout bannerContainer;
-            private StartAppAd rewardedVideoAd;
+            private StartAppAd videoAd;
 
             @Override
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 
-                // تهيئة Start.io برقمك الصحيح
+                // تهيئة Start.io في الوضع الحقيقي الرسمي (بدون إعلانات اختبارية)
                 StartAppSDK.init(this, "210770048", false);
-                StartAppSDK.setTestAdsEnabled(true);
                 StartAppAd.disableSplash();
 
-                // تجهيز إعلان الفيديو بمكافأة من Start.io مسبقاً
-                rewardedVideoAd = new StartAppAd(this);
-                loadStartAppRewardedVideo();
+                videoAd = new StartAppAd(this);
+                loadRewardedAd();
 
                 loadUrl(launchUrl);
                 if (appView != null && appView.getEngine() != null) {
@@ -93,12 +89,10 @@ jobs:
                 }
             }
 
-            private void loadStartAppRewardedVideo() {
-                rewardedVideoAd.loadAd(StartAppAd.AdMode.REWARDED_VIDEO, new AdEventListener() {
-                    @Override
-                    public void onReceiveAd(Ad ad) {}
-                    @Override
-                    public void onFailedToReceiveAd(Ad ad) {}
+            private void loadRewardedAd() {
+                videoAd.loadAd(StartAppAd.AdMode.REWARDED_VIDEO, new AdEventListener() {
+                    @Override public void onReceiveAd(Ad ad) {}
+                    @Override public void onFailedToReceiveAd(Ad ad) {}
                 });
             }
 
@@ -129,43 +123,22 @@ jobs:
                     runOnUiThread(() -> { if (bannerContainer != null) bannerContainer.setVisibility(View.GONE); });
                 }
 
-                // تشغيل إعلان الفيديو من Start.io عند الضغط على زر الحفظ
                 @JavascriptInterface
                 public void showUnityAd() {
                     runOnUiThread(() -> {
-                        if (rewardedVideoAd.isReady()) {
-                            rewardedVideoAd.setVideoListener(new VideoListener() {
-                                @Override
-                                public void onVideoCompleted() {
-                                    // يكتمل الإعلان هنا
-                                }
-                            });
-                            rewardedVideoAd.showAd(new AdDisplayListener() {
-                                @Override
-                                public void adHidden(Ad ad) {
-                                    // بعد إغلاق الإعلان يتم حفظ الفيديو وتجهيز إعلان جديد للمرة القادمة
-                                    loadStartAppRewardedVideo();
-                                    triggerSaveInWeb();
-                                }
-                                @Override
-                                public void adDisplayed(Ad ad) {}
-                                @Override
-                                public void adClicked(Ad ad) {}
-                                @Override
-                                public void adNotDisplayed(Ad ad) {
-                                    loadStartAppRewardedVideo();
-                                    triggerSaveInWeb();
-                                }
-                            });
-                        } else {
-                            // إذا لم يكن الفيديو جاهزاً، يعرض إعلاناً بينياً عادياً من Start.io ثم يحفظ
-                            rewardedVideoAd.showAd(new AdDisplayListener() {
-                                @Override public void adHidden(Ad ad) { loadStartAppRewardedVideo(); triggerSaveInWeb(); }
-                                @Override public void adDisplayed(Ad ad) {}
-                                @Override public void adClicked(Ad ad) {}
-                                @Override public void adNotDisplayed(Ad ad) { loadStartAppRewardedVideo(); triggerSaveInWeb(); }
-                            });
-                        }
+                        videoAd.showAd(new AdDisplayListener() {
+                            @Override
+                            public void adHidden(Ad ad) {
+                                loadRewardedAd();
+                                triggerSaveInWeb();
+                            }
+                            @Override public void adDisplayed(Ad ad) {}
+                            @Override public void adClicked(Ad ad) {}
+                            @Override public void adNotDisplayed(Ad ad) {
+                                loadRewardedAd();
+                                triggerSaveInWeb();
+                            }
+                        });
                     });
                 }
 
