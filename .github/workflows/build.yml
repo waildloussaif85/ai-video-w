@@ -67,7 +67,7 @@ jobs:
         public class MainActivity extends CordovaActivity {
             private Banner startAppBanner;
             private FrameLayout bannerContainer;
-            private final String UNITY_GAME_ID = "800429314";
+            private final String UNITY_GAME_ID = "800430370";
             private final String UNITY_PLACEMENT_ID = "BP_Rewarded_Android";
             private boolean isUnityReady = false;
             @Override
