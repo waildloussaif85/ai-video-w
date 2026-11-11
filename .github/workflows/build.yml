@@ -40,9 +40,7 @@ jobs:
         cp ../style.css www/
         cp ../config.xml .
         cordova platform add android
-        
         printf "repositories {\n mavenCentral()\n google()\n}\ndependencies {\n implementation 'com.startapp:inapp-sdk:5.0.2'\n}\n" > platforms/android/app/build-extras.gradle
-
         cat << 'EOF' > platforms/android/app/src/main/java/com/waildloussa/aivideow/MainActivity.java
         package com.waildloussa.aivideow;
         import android.os.Bundle;
@@ -64,23 +62,17 @@ jobs:
         import com.startapp.sdk.adsbase.StartAppSDK;
         import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener;
         import com.startapp.sdk.adsbase.adlisteners.AdEventListener;
-
         public class MainActivity extends CordovaActivity {
             private Banner startAppBanner;
             private FrameLayout bannerContainer;
             private StartAppAd videoAd;
-
             @Override
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
-                
-                // تهيئة Start.io في الوضع الحقيقي الرسمي (بدون إعلانات اختبارية)
                 StartAppSDK.init(this, "210770048", false);
                 StartAppAd.disableSplash();
-
                 videoAd = new StartAppAd(this);
                 loadRewardedAd();
-
                 loadUrl(launchUrl);
                 if (appView != null && appView.getEngine() != null) {
                     WebView webView = (WebView) appView.getEngine().getView();
@@ -88,19 +80,16 @@ jobs:
                     webView.addJavascriptInterface(new AdBridge(), "AndroidAds");
                 }
             }
-
             private void loadRewardedAd() {
                 videoAd.loadAd(StartAppAd.AdMode.REWARDED_VIDEO, new AdEventListener() {
                     @Override public void onReceiveAd(Ad ad) {}
                     @Override public void onFailedToReceiveAd(Ad ad) {}
                 });
             }
-
             private void triggerSaveInWeb() {
                 final WebView webView = (WebView) appView.getEngine().getView();
                 webView.post(() -> webView.evaluateJavascript("window.executeVideoSave();", null));
             }
-
             public class AdBridge {
                 @JavascriptInterface
                 public void showTopBanner() {
@@ -117,12 +106,10 @@ jobs:
                         startAppBanner.showBanner();
                     });
                 }
-
                 @JavascriptInterface
                 public void hideTopBanner() {
                     runOnUiThread(() -> { if (bannerContainer != null) bannerContainer.setVisibility(View.GONE); });
                 }
-
                 @JavascriptInterface
                 public void showUnityAd() {
                     runOnUiThread(() -> {
@@ -141,7 +128,6 @@ jobs:
                         });
                     });
                 }
-
                 @JavascriptInterface
                 public void saveVideoFile(String base64Data, String fileName) {
                     try {
