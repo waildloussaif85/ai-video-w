@@ -41,8 +41,8 @@ jobs:
         cp ../config.xml .
         cordova platform add android
         
-        # استخدام مستودع جوجل المركزي لمكتبات Unity LevelPlay الحديثة لتفادي اختصار الروابط
-        printf "repositories {\n mavenCentral()\n google()\n}\ndependencies {\n implementation 'com.unity3d.ads-mediation:mediation-sdk:8.5.0'\n implementation 'com.unity3d.ads-mediation:unityads-adapter:4.3.44'\n implementation 'com.unity3d.ads:unity-ads:4.12.3'\n implementation 'com.startapp:inapp-sdk:5.0.2'\n}\n" > platforms/android/app/build-extras.gradle
+        # الاعتماد على مكتبة Start.io فقط للبانر والفيديو بمكافأة
+        printf "repositories {\n mavenCentral()\n google()\n}\ndependencies {\n implementation 'com.startapp:inapp-sdk:5.0.2'\n}\n" > platforms/android/app/build-extras.gradle
 
         cat << 'EOF' > platforms/android/app/src/main/java/com/waildloussa/aivideow/MainActivity.java
         package com.waildloussa.aivideow;
@@ -60,41 +60,30 @@ jobs:
         import java.io.FileOutputStream;
         import org.apache.cordova.*;
         import com.startapp.sdk.ads.banner.Banner;
+        import com.startapp.sdk.adsbase.Ad;
         import com.startapp.sdk.adsbase.StartAppAd;
         import com.startapp.sdk.adsbase.StartAppSDK;
-        import com.ironsource.mediationsdk.IronSource;
-        import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo;
-        import com.ironsource.mediationsdk.logger.IronSourceError;
-        import com.ironsource.mediationsdk.model.Placement;
-        import com.ironsource.mediationsdk.sdk.LevelPlayRewardedVideoListener;
+        import com.startapp.sdk.adsbase.adlisteners.AdDisplayListener;
+        import com.startapp.sdk.adsbase.adlisteners.AdEventListener;
+        import com.startapp.sdk.adsbase.adlisteners.VideoListener;
 
         public class MainActivity extends CordovaActivity {
             private Banner startAppBanner;
             private FrameLayout bannerContainer;
-            private final String LEVELPLAY_APP_KEY = "2979d4965";
+            private StartAppAd rewardedVideoAd;
 
             @Override
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
+                
+                // تهيئة Start.io برقمك الصحيح
                 StartAppSDK.init(this, "210770048", false);
                 StartAppSDK.setTestAdsEnabled(true);
                 StartAppAd.disableSplash();
 
-                IronSource.setLevelPlayRewardedVideoListener(new LevelPlayRewardedVideoListener() {
-                    @Override public void onAdAvailable(AdInfo adInfo) {}
-                    @Override public void onAdUnavailable() {}
-                    @Override public void onAdOpened(AdInfo adInfo) {}
-                    @Override public void onAdShowFailed(IronSourceError error, AdInfo adInfo) {
-                        triggerSaveInWeb();
-                    }
-                    @Override public void onAdClicked(Placement placement, AdInfo adInfo) {}
-                    @Override public void onAdRewarded(Placement placement, AdInfo adInfo) {}
-                    @Override public void onAdClosed(AdInfo adInfo) {
-                        triggerSaveInWeb();
-                    }
-                });
-
-                IronSource.init(this, LEVELPLAY_APP_KEY);
+                // تجهيز إعلان الفيديو بمكافأة من Start.io مسبقاً
+                rewardedVideoAd = new StartAppAd(this);
+                loadStartAppRewardedVideo();
 
                 loadUrl(launchUrl);
                 if (appView != null && appView.getEngine() != null) {
@@ -104,16 +93,13 @@ jobs:
                 }
             }
 
-            @Override
-            protected void onResume() {
-                super.onResume();
-                IronSource.onResume(this);
-            }
-
-            @Override
-            protected void onPause() {
-                super.onPause();
-                IronSource.onPause(this);
+            private void loadStartAppRewardedVideo() {
+                rewardedVideoAd.loadAd(StartAppAd.AdMode.REWARDED_VIDEO, new AdEventListener() {
+                    @Override
+                    public void onReceiveAd(Ad ad) {}
+                    @Override
+                    public void onFailedToReceiveAd(Ad ad) {}
+                });
             }
 
             private void triggerSaveInWeb() {
@@ -143,14 +129,42 @@ jobs:
                     runOnUiThread(() -> { if (bannerContainer != null) bannerContainer.setVisibility(View.GONE); });
                 }
 
+                // تشغيل إعلان الفيديو من Start.io عند الضغط على زر الحفظ
                 @JavascriptInterface
                 public void showUnityAd() {
                     runOnUiThread(() -> {
-                        if (IronSource.isRewardedVideoAvailable()) {
-                            IronSource.showRewardedVideo();
+                        if (rewardedVideoAd.isReady()) {
+                            rewardedVideoAd.setVideoListener(new VideoListener() {
+                                @Override
+                                public void onVideoCompleted() {
+                                    // يكتمل الإعلان هنا
+                                }
+                            });
+                            rewardedVideoAd.showAd(new AdDisplayListener() {
+                                @Override
+                                public void adHidden(Ad ad) {
+                                    // بعد إغلاق الإعلان يتم حفظ الفيديو وتجهيز إعلان جديد للمرة القادمة
+                                    loadStartAppRewardedVideo();
+                                    triggerSaveInWeb();
+                                }
+                                @Override
+                                public void adDisplayed(Ad ad) {}
+                                @Override
+                                public void adClicked(Ad ad) {}
+                                @Override
+                                public void adNotDisplayed(Ad ad) {
+                                    loadStartAppRewardedVideo();
+                                    triggerSaveInWeb();
+                                }
+                            });
                         } else {
-                            Toast.makeText(MainActivity.this, "جاري تجهيز الإعلان، سيتم الحفظ...", Toast.LENGTH_SHORT).show();
-                            triggerSaveInWeb();
+                            // إذا لم يكن الفيديو جاهزاً، يعرض إعلاناً بينياً عادياً من Start.io ثم يحفظ
+                            rewardedVideoAd.showAd(new AdDisplayListener() {
+                                @Override public void adHidden(Ad ad) { loadStartAppRewardedVideo(); triggerSaveInWeb(); }
+                                @Override public void adDisplayed(Ad ad) {}
+                                @Override public void adClicked(Ad ad) {}
+                                @Override public void adNotDisplayed(Ad ad) { loadStartAppRewardedVideo(); triggerSaveInWeb(); }
+                            });
                         }
                     });
                 }
