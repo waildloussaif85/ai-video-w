@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
-    <link rel="stylesheet" href="style.css?v=8000">
+    <link rel="stylesheet" href="style.css?v=9000">
     <style>
         body, html {
             margin: 0;
@@ -13,20 +13,15 @@
             color: #ffffff;
         }
         #welcome-screen { display: block; }
-        #main-app-screen { display: none; }
-        #video-output-screen { display: none; }
         
-        /* مساحة الباند العلوية المحجوزة لإعلان Start.io لكي لا يغطي على التصميم */
-        .ad-header-wrapper {
-            width: 100%;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 5px 0;
-            background: transparent;
+        /* إضافة مسافة 60 بكسل في أعلى الصفحة الثانية ليجلس فيها إعلان Start.io دون تغطية الأزرار */
+        #main-app-screen { 
+            display: none; 
+            padding-top: 60px !important; 
             box-sizing: border-box;
         }
+        
+        #video-output-screen { display: none; }
     </style>
 </head>
 <body>
@@ -44,15 +39,12 @@
             </div>
             <h1 class="welcome-title">ai video w</h1>
             <p class="welcome-subtitle">Create TikToks & Reels in Seconds</p>
-            <button id="start-btn" class="start-btn" onclick="document.getElementById('welcome-screen').style.display='none'; document.getElementById('main-app-screen').style.display='block'; showTopBanner();">Start Creating 🚀</button>
+            <button id="start-btn" class="start-btn">Start Creating 🚀</button>
         </div>
     </div>
 
-    <!-- 2. الواجهة الرئيسية (صفحة الإعدادات والميديا) -->
+    <!-- 2. الواجهة الرئيسية (صفحة الإعدادات - بانر Start.io يظهر في المساحة العلوية المخصصة) -->
     <div id="main-app-screen" class="screen">
-        <!-- هذه المساحة الفارغة سيملؤها إعلان Start.io العلوي -->
-        <div class="ad-header-wrapper"></div>
-        
         <div class="app-card">
             <h1 class="main-title">ai video w</h1>
             <p class="sub-header">Ultimate AI Video Generator</p>
@@ -114,7 +106,7 @@
         </div>
     </div>
 
-    <!-- 3. شاشة عرض النتيجة -->
+    <!-- 3. شاشة عرض النتيجة (زر الحفظ مربوط بإعلان Unity Ads) -->
     <div id="video-output-screen" class="screen">
         <div class="app-card video-card">
             <div class="video-preview-wrapper">
@@ -122,21 +114,13 @@
                 <video id="outputVideo" autoplay controls playsinline loop></video>
             </div>
             <div class="action-buttons-row">
-                <a id="download-btn" class="app-btn download-btn" style="display: none;">Download Video 📥</a>
-                <button id="back-btn" class="app-btn back-btn">Back ↩️</button>
+                <button type="button" id="download-btn" class="app-btn download-btn" style="display: none;">Download Video 📥</button>
+                <button type="button" id="back-btn" class="app-btn back-btn">Back ↩️</button>
             </div>
         </div>
     </div>
 
     <script src="cordova.js"></script>
-    <script src="script.js?v=8000"></script>
-
-    <script type="text/javascript">
-        function showTopBanner() {
-            if (typeof AndroidAds !== 'undefined') { 
-                AndroidAds.showTopBanner(); 
-            }
-        }
-    </script>
+    <script src="script.js?v=9000"></script>
 </body>
 </html>
