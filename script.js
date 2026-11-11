@@ -13,37 +13,28 @@ bgAudioPlayer.crossOrigin = "anonymous";
 window.videoStartTime = 0;
 window.pendingVideoBlob = null;
 
+// دالة الحفظ الفعلية في مجلد Downloads بعد انتهاء إعلان Unity
 window.executeVideoSave = function() {
     const videoBlob = window.pendingVideoBlob;
     if (!videoBlob) return;
     
     const fileName = "ai-video-" + Date.now() + ".mp4";
-    const file = new File([videoBlob], fileName, { type: 'video/mp4' });
-    
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({
-            files: [file],
-            title: 'AI Video W'
-        }).catch(function() {
-            saveViaBase64(videoBlob, fileName);
-        });
-    } else {
-        saveViaBase64(videoBlob, fileName);
-    }
-};
-
-function saveViaBase64(blob, fileName) {
     const reader = new FileReader();
     reader.onloadend = function() {
-        const link = document.createElement("a");
-        link.href = reader.result;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const base64Data = reader.result;
+        if (typeof AndroidAds !== 'undefined' && AndroidAds.saveVideoFile) {
+            AndroidAds.saveVideoFile(base64Data, fileName);
+        } else {
+            const link = document.createElement("a");
+            link.href = base64Data;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     };
-    reader.readAsDataURL(blob);
-}
+    reader.readAsDataURL(videoBlob);
+};
 
 function drawFrame() {
     if (!isGenerating) return;
@@ -121,7 +112,6 @@ function handleImages(files) {
 
 function handleMusic(files) {
     if (!files || files.length === 0) return;
-    // تحديد الملف الصوتي الأول بدقة ليشتغل الصوت
     const audioFile = files[0];
     bgAudioPlayer.src = URL.createObjectURL(audioFile);
     bgAudioPlayer.load();
@@ -135,9 +125,11 @@ function onBackClick() {
     if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
     bgAudioPlayer.pause();
     bgAudioPlayer.currentTime = 0;
+    
     document.getElementById("video-output-screen").style.display = "none";
     document.getElementById("main-app-screen").style.display = "block";
     
+    // إعادة إظهار بانر Start.io في المساحة العلوية للصفحة الثانية
     if (typeof AndroidAds !== 'undefined') {
         AndroidAds.showTopBanner();
     }
@@ -155,6 +147,7 @@ function onGenerateClick() {
         return;
     }
     
+    // إخفاء البانر العلوي أثناء عرض الفيديو
     if (typeof AndroidAds !== 'undefined') {
         AndroidAds.hideTopBanner();
     }
@@ -191,7 +184,6 @@ function onGenerateClick() {
             source.connect(audioContext.destination);
             const tracks = dest.stream.getAudioTracks();
             if (tracks && tracks.length > 0) {
-                // إضافة مسار الصوت الأول للفيديو بدقة
                 videoStream.addTrack(tracks[0]);
             }
         } catch (err) {
@@ -201,7 +193,7 @@ function onGenerateClick() {
     
     if (bgAudioPlayer.src) {
         bgAudioPlayer.currentTime = 0;
-        bgAudioPlayer.play().catch(function(e) { console.log(e); });
+        bgAudioPlayer.play().catch(function() {});
     }
     
     let options = { mimeType: 'video/webm;codecs=vp8,opus' };
@@ -234,8 +226,8 @@ function onGenerateClick() {
             const downloadBtn = document.getElementById("download-btn");
             if (downloadBtn) {
                 downloadBtn.style.display = "block";
-                downloadBtn.removeAttribute("href");
                 
+                // ربط زر الحفظ بإعلان Unity Ads
                 downloadBtn.onclick = function(evt) {
                     evt.preventDefault();
                     if (typeof AndroidAds !== 'undefined') {
@@ -257,11 +249,15 @@ function onGenerateClick() {
 document.addEventListener("DOMContentLoaded", function() {
     const startBtn = document.getElementById("start-btn");
     if (startBtn) {
-        startBtn.addEventListener("click", function() {
+        startBtn.onclick = function() {
+            document.getElementById("welcome-screen").style.display = "none";
+            document.getElementById("main-app-screen").style.display = "block";
+            
+            // إظهار بانر Start.io في المساحة العلوية للصفحة الثانية
             if (typeof AndroidAds !== 'undefined') {
                 AndroidAds.showTopBanner();
             }
-        });
+        };
     }
 
     const imgInp = document.getElementById("image-input");
