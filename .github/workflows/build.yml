@@ -70,20 +70,25 @@ jobs:
             private final String UNITY_GAME_ID = "800430370";
             private final String UNITY_PLACEMENT_ID = "Rewarded_Android";
             private boolean isUnityReady = false;
+
             @Override
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 StartAppSDK.init(this, "210770048", false);
                 StartAppSDK.setTestAdsEnabled(true);
                 StartAppAd.disableSplash();
-                UnityAds.initialize(getApplicationContext(), UNITY_GAME_ID, true, new IUnityAdsInitializationListener() {
+
+                UnityAds.initialize(this, UNITY_GAME_ID, true, new IUnityAdsInitializationListener() {
                     @Override
-                    public void onInitializationComplete() { loadUnityAd(); }
+                    public void onInitializationComplete() {
+                        loadUnityAd(false);
+                    }
                     @Override
                     public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Init: " + message, Toast.LENGTH_LONG).show());
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Init Fail: " + message, Toast.LENGTH_LONG).show());
                     }
                 });
+
                 loadUrl(launchUrl);
                 if (appView != null && appView.getEngine() != null) {
                     WebView webView = (WebView) appView.getEngine().getView();
@@ -91,17 +96,50 @@ jobs:
                     webView.addJavascriptInterface(new AdBridge(), "AndroidAds");
                 }
             }
-            private void loadUnityAd() {
+
+            private void loadUnityAd(final boolean showImmediately) {
                 UnityAds.load(UNITY_PLACEMENT_ID, new IUnityAdsLoadListener() {
                     @Override
-                    public void onUnityAdsAdLoaded(String placementId) { isUnityReady = true; }
+                    public void onUnityAdsAdLoaded(String placementId) {
+                        isUnityReady = true;
+                        if (showImmediately) {
+                            displayUnityNow();
+                        }
+                    }
                     @Override
                     public void onUnityAdsFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {
                         isUnityReady = false;
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Load: " + message, Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Load Fail: " + message, Toast.LENGTH_LONG).show());
+                        if (showImmediately) {
+                            triggerSaveInWeb();
+                        }
                     }
                 });
             }
+
+            private void displayUnityNow() {
+                runOnUiThread(() -> {
+                    UnityAds.show(MainActivity.this, UNITY_PLACEMENT_ID, new UnityAdsShowOptions(), new IUnityAdsShowListener() {
+                        @Override public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
+                            runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Show Fail: " + message, Toast.LENGTH_LONG).show());
+                            triggerSaveInWeb();
+                        }
+                        @Override public void onUnityAdsShowStart(String placementId) {}
+                        @Override public void onUnityAdsShowClick(String placementId) {}
+                        @Override public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
+                            isUnityReady = false;
+                            loadUnityAd(false);
+                            triggerSaveInWeb();
+                        }
+                    });
+                });
+            }
+
+            private void triggerSaveInWeb() {
+                final WebView webView = (WebView) appView.getEngine().getView();
+                webView.post(() -> webView.evaluateJavascript("window.executeVideoSave();", null));
+            }
+
             public class AdBridge {
                 @JavascriptInterface
                 public void showTopBanner() {
@@ -118,30 +156,24 @@ jobs:
                         startAppBanner.showBanner();
                     });
                 }
+
                 @JavascriptInterface
                 public void hideTopBanner() {
                     runOnUiThread(() -> { if (bannerContainer != null) bannerContainer.setVisibility(View.GONE); });
                 }
+
                 @JavascriptInterface
                 public void showUnityAd() {
                     runOnUiThread(() -> {
                         if (isUnityReady) {
-                            UnityAds.show(MainActivity.this, UNITY_PLACEMENT_ID, new UnityAdsShowOptions(), new IUnityAdsShowListener() {
-                                @Override public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) { triggerSaveInWeb(); }
-                                @Override public void onUnityAdsShowStart(String placementId) {}
-                                @Override public void onUnityAdsShowClick(String placementId) {}
-                                @Override public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
-                                    isUnityReady = false;
-                                    loadUnityAd();
-                                    triggerSaveInWeb();
-                                }
-                            });
+                            displayUnityNow();
                         } else {
-                            loadUnityAd();
-                            triggerSaveInWeb();
+                            Toast.makeText(MainActivity.this, "جاري جلب إعلان Unity...", Toast.LENGTH_SHORT).show();
+                            loadUnityAd(true);
                         }
                     });
                 }
+
                 @JavascriptInterface
                 public void saveVideoFile(String base64Data, String fileName) {
                     try {
@@ -157,10 +189,6 @@ jobs:
                     } catch (Exception e) {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, "خطأ في الحفظ: " + e.getMessage(), Toast.LENGTH_LONG).show());
                     }
-                }
-                private void triggerSaveInWeb() {
-                    final WebView webView = (WebView) appView.getEngine().getView();
-                    webView.post(() -> webView.evaluateJavascript("window.executeVideoSave();", null));
                 }
             }
         }
