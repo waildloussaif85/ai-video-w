@@ -67,8 +67,8 @@ jobs:
         public class MainActivity extends CordovaActivity {
             private Banner startAppBanner;
             private FrameLayout bannerContainer;
-            private final String UNITY_GAME_ID = "800430370";
-            private final String UNITY_PLACEMENT_ID = "BP_Interstitial_Android";
+            private final String UNITY_GAME_ID = "800429314";
+            private final String UNITY_PLACEMENT_ID = "BP_Rewarded_Android";
             private boolean isUnityReady = false;
             @Override
             public void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,7 @@ jobs:
                     public void onInitializationComplete() { loadUnityAd(); }
                     @Override
                     public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Error: " + message, Toast.LENGTH_LONG).show());
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Init: " + message, Toast.LENGTH_LONG).show());
                     }
                 });
                 loadUrl(launchUrl);
@@ -137,7 +137,6 @@ jobs:
                                 }
                             });
                         } else {
-                            Toast.makeText(MainActivity.this, "جاري تجهيز الإعلان...", Toast.LENGTH_SHORT).show();
                             loadUnityAd();
                             triggerSaveInWeb();
                         }
