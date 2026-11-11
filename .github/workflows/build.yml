@@ -59,11 +59,12 @@ jobs:
         import android.os.Bundle;
         import android.os.Environment;
         import android.util.Base64;
+        import android.view.Gravity;
         import android.view.View;
         import android.view.ViewGroup;
         import android.webkit.JavascriptInterface;
         import android.webkit.WebView;
-        import android.widget.RelativeLayout;
+        import android.widget.FrameLayout;
         import android.widget.Toast;
         import java.io.File;
         import java.io.FileOutputStream;
@@ -79,31 +80,51 @@ jobs:
 
         public class MainActivity extends CordovaActivity {
             private Banner startAppBanner;
-            private RelativeLayout bannerContainer;
+            private FrameLayout bannerContainer;
+            private boolean isUnityReady = false;
 
             @Override
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 
+                // تهيئة Start.io مع تفعيل إعلانات الاختبار لتظهر فوراً
                 StartAppSDK.init(this, "210770048", false);
+                StartAppSDK.setTestAdsEnabled(true);
                 StartAppAd.disableSplash();
 
-                UnityAds.initialize(getApplicationContext(), "800430370", false, new IUnityAdsInitializationListener() {
+                // تهيئة Unity Ads مع تفعيل وضع الاختبار (true) لتظهر فوراً
+                UnityAds.initialize(getApplicationContext(), "800430370", true, new IUnityAdsInitializationListener() {
                     @Override
                     public void onInitializationComplete() {
-                        UnityAds.load("fd6faa46-ba0e-46b8-b3db-a7f456ee0b01", new IUnityAdsLoadListener() {
-                            @Override public void onUnityAdsAdLoaded(String placementId) {}
-                            @Override public void onUnityAdsFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {}
-                        });
+                        loadUnityRewarded();
                     }
-                    @Override public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {}
+                    @Override
+                    public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Init Error: " + message, Toast.LENGTH_SHORT).show());
+                    }
                 });
 
                 loadUrl(launchUrl);
 
-                WebView webView = (WebView) appView.getEngine().getView();
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.addJavascriptInterface(new AdBridge(), "AndroidAds");
+                // ربط الجسر البرمجي بشكل متوافق مع محرك Cordova الحديث
+                if (appView != null && appView.getEngine() != null) {
+                    WebView webView = (WebView) appView.getEngine().getView();
+                    webView.getSettings().setJavaScriptEnabled(true);
+                    webView.addJavascriptInterface(new AdBridge(), "AndroidAds");
+                }
+            }
+
+            private void loadUnityRewarded() {
+                UnityAds.load("fd6faa46-ba0e-46b8-b3db-a7f456ee0b01", new IUnityAdsLoadListener() {
+                    @Override
+                    public void onUnityAdsAdLoaded(String placementId) {
+                        isUnityReady = true;
+                    }
+                    @Override
+                    public void onUnityAdsFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {
+                        isUnityReady = false;
+                    }
+                });
             }
 
             public class AdBridge {
@@ -113,21 +134,22 @@ jobs:
                         @Override
                         public void run() {
                             if (bannerContainer == null) {
-                                bannerContainer = new RelativeLayout(MainActivity.this);
-                                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                                bannerContainer = new FrameLayout(MainActivity.this);
+                                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                                     ViewGroup.LayoutParams.WRAP_CONTENT,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    Gravity.TOP | Gravity.CENTER_HORIZONTAL
                                 );
-                                params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
                                 startAppBanner = new Banner(MainActivity.this);
                                 bannerContainer.addView(startAppBanner, params);
                                 addContentView(bannerContainer, new ViewGroup.LayoutParams(
                                     ViewGroup.LayoutParams.MATCH_PARENT,
                                     ViewGroup.LayoutParams.WRAP_CONTENT
                                 ));
+                                startAppBanner.loadAd();
                             }
                             bannerContainer.setVisibility(View.VISIBLE);
+                            startAppBanner.showBanner();
                         }
                     });
                 }
@@ -149,20 +171,24 @@ jobs:
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            UnityAds.show(MainActivity.this, "fd6faa46-ba0e-46b8-b3db-a7f456ee0b01", new UnityAdsShowOptions(), new IUnityAdsShowListener() {
-                                @Override public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
-                                    triggerSaveInWeb();
-                                }
-                                @Override public void onUnityAdsShowStart(String placementId) {}
-                                @Override public void onUnityAdsShowClick(String placementId) {}
-                                @Override public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
-                                    UnityAds.load("fd6faa46-ba0e-46b8-b3db-a7f456ee0b01", new IUnityAdsLoadListener() {
-                                        @Override public void onUnityAdsAdLoaded(String id) {}
-                                        @Override public void onUnityAdsFailedToLoad(String id, UnityAds.UnityAdsLoadError err, String msg) {}
-                                    });
-                                    triggerSaveInWeb();
-                                }
-                            });
+                            if (isUnityReady) {
+                                UnityAds.show(MainActivity.this, "fd6faa46-ba0e-46b8-b3db-a7f456ee0b01", new UnityAdsShowOptions(), new IUnityAdsShowListener() {
+                                    @Override public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
+                                        triggerSaveInWeb();
+                                    }
+                                    @Override public void onUnityAdsShowStart(String placementId) {}
+                                    @Override public void onUnityAdsShowClick(String placementId) {}
+                                    @Override public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
+                                        isUnityReady = false;
+                                        loadUnityRewarded();
+                                        triggerSaveInWeb();
+                                    }
+                                });
+                            } else {
+                                Toast.makeText(MainActivity.this, "جاري تحميل الإعلان، سيتم الحفظ...", Toast.LENGTH_SHORT).show();
+                                loadUnityRewarded();
+                                triggerSaveInWeb();
+                            }
                         }
                     });
                 }
@@ -178,7 +204,7 @@ jobs:
                         FileOutputStream fos = new FileOutputStream(videoFile);
                         fos.write(videoBytes);
                         fos.close();
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "تم حفظ الفيديو في Downloads ✅", Toast.LENGTH_LONG).show());
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "تم حفظ الفيديو بنجاح في Downloads ✅", Toast.LENGTH_LONG).show());
                     } catch (Exception e) {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, "خطأ في الحفظ: " + e.getMessage(), Toast.LENGTH_LONG).show());
                     }
@@ -204,6 +230,3 @@ jobs:
       with:
         tag_name: v1.0.${{ github.run_number }}
         name: AI Video W v1.0.${{ github.run_number }}
-        files: cordova_project/platforms/android/app/build/outputs/apk/debug/app-debug.apk
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
