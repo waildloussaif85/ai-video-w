@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
-    <link rel="stylesheet" href="style.css?v=9000">
+    <link rel="stylesheet" href="style.css?v=9999">
     <style>
         body, html {
             margin: 0;
@@ -13,20 +13,16 @@
             color: #ffffff;
         }
         #welcome-screen { display: block; }
-        
-        /* إضافة مسافة 60 بكسل في أعلى الصفحة الثانية ليجلس فيها إعلان Start.io دون تغطية الأزرار */
         #main-app-screen { 
             display: none; 
             padding-top: 60px !important; 
             box-sizing: border-box;
         }
-        
         #video-output-screen { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- 1. واجهة الترحيب -->
     <div id="welcome-screen" class="screen">
         <div class="welcome-container">
             <div class="clapperboard-icon">
@@ -43,7 +39,6 @@
         </div>
     </div>
 
-    <!-- 2. الواجهة الرئيسية (صفحة الإعدادات - بانر Start.io يظهر في المساحة العلوية المخصصة) -->
     <div id="main-app-screen" class="screen">
         <div class="app-card">
             <h1 class="main-title">ai video w</h1>
@@ -51,17 +46,17 @@
 
             <div class="input-group">
                 <label>Center Main Text:</label>
-                <input type="text" id="main-c" placeholder="Fhjkkbbvcv">
+                <input type="text" id="main-c" placeholder="Enter main text...">
             </div>
 
             <div class="row">
                 <div class="input-group half">
                     <label>Top-Left Text:</label>
-                    <input type="text" id="top-left-text" placeholder="Ttuijvcy">
+                    <input type="text" id="top-left-text" placeholder="Top-left...">
                 </div>
                 <div class="input-group half">
                     <label>Top-Right Text:</label>
-                    <input type="text" id="top-right-text" placeholder="Jjhggh">
+                    <input type="text" id="top-right-text" placeholder="Top-right...">
                 </div>
             </div>
 
@@ -106,7 +101,6 @@
         </div>
     </div>
 
-    <!-- 3. شاشة عرض النتيجة (زر الحفظ مربوط بإعلان Unity Ads) -->
     <div id="video-output-screen" class="screen">
         <div class="app-card video-card">
             <div class="video-preview-wrapper">
@@ -121,6 +115,6 @@
     </div>
 
     <script src="cordova.js"></script>
-    <script src="script.js?v=9000"></script>
+    <script src="script.js?v=9999"></script>
 </body>
 </html>
