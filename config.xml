@@ -6,7 +6,7 @@
     
     <content src="index.html" />
     
-    <!-- صلاحيات الوصول الشاملة للإنترنت -->
+    <!-- صلاحيات الوصول الشاملة للإنترنت لجلب الإعلانات -->
     <access origin="*" />
     <allow-navigation href="*" />
     <allow-intent href="http://*/*" />
@@ -14,14 +14,9 @@
 
     <platform name="android">
         <preference name="AndroidXEnabled" value="true" />
-        <preference name="Scheme" value="https" />
+        <preference name="AndroidInsecureFileModeEnabled" value="true" />
         <allow-intent href="market:*" />
     </platform>
-
-    <!-- إضافات كوردوفا الحديثة والمستقرة فقط -->
-    <plugin name="cordova-plugin-unityads" spec="latest" />
-    <plugin name="cordova-plugin-startapp-ads" spec="latest" />
-    <plugin name="cordova-plugin-file" spec="latest" />
 
     <preference name="Orientation" value="portrait" />
 </widget>
