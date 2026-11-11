@@ -40,22 +40,9 @@ jobs:
         cp ../style.css www/
         cp ../config.xml .
         cordova platform add android
-        
-        cat << 'EOF' > platforms/android/app/build-extras.gradle
-        repositories {
-            mavenCentral()
-            google()
-            maven { url 'https://startapp.com' }
-        }
-        dependencies {
-            implementation 'com.unity3d.ads:unity-ads:4.12.0'
-            implementation 'com.startapp:inapp-sdk:5.0.2'
-        }
-        EOF
-
+        printf "repositories {\n mavenCentral()\n google()\n maven { url 'https://startapp.com' }\n}\ndependencies {\n implementation 'com.unity3d.ads:unity-ads:4.12.0'\n implementation 'com.startapp:inapp-sdk:5.0.2'\n}\n" > platforms/android/app/build-extras.gradle
         cat << 'EOF' > platforms/android/app/src/main/java/com/waildloussa/aivideow/MainActivity.java
         package com.waildloussa.aivideow;
-
         import android.os.Bundle;
         import android.os.Environment;
         import android.util.Base64;
@@ -77,124 +64,85 @@ jobs:
         import com.unity3d.ads.IUnityAdsShowListener;
         import com.unity3d.ads.UnityAds;
         import com.unity3d.ads.UnityAdsShowOptions;
-
         public class MainActivity extends CordovaActivity {
             private Banner startAppBanner;
             private FrameLayout bannerContainer;
             private final String UNITY_GAME_ID = "800430370";
             private final String UNITY_PLACEMENT_ID = "BP_Interstitial_Android";
             private boolean isUnityReady = false;
-
             @Override
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
-                
-                // 1. تهيئة Start.io في وضع الاختبار لكي يظهر البانر ولا يختفي
                 StartAppSDK.init(this, "210770048", false);
                 StartAppSDK.setTestAdsEnabled(true);
                 StartAppAd.disableSplash();
-
-                // 2. تهيئة Unity Ads برقمك واسم الوحدة الصحيح في وضع الاختبار
                 UnityAds.initialize(getApplicationContext(), UNITY_GAME_ID, true, new IUnityAdsInitializationListener() {
                     @Override
-                    public void onInitializationComplete() {
-                        loadUnityAd();
-                    }
+                    public void onInitializationComplete() { loadUnityAd(); }
                     @Override
                     public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Error: " + message, Toast.LENGTH_LONG).show());
                     }
                 });
-
                 loadUrl(launchUrl);
-
                 if (appView != null && appView.getEngine() != null) {
                     WebView webView = (WebView) appView.getEngine().getView();
                     webView.getSettings().setJavaScriptEnabled(true);
                     webView.addJavascriptInterface(new AdBridge(), "AndroidAds");
                 }
             }
-
             private void loadUnityAd() {
                 UnityAds.load(UNITY_PLACEMENT_ID, new IUnityAdsLoadListener() {
                     @Override
-                    public void onUnityAdsAdLoaded(String placementId) {
-                        isUnityReady = true;
-                    }
+                    public void onUnityAdsAdLoaded(String placementId) { isUnityReady = true; }
                     @Override
                     public void onUnityAdsFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {
                         isUnityReady = false;
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Load Error: " + message, Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Load: " + message, Toast.LENGTH_SHORT).show());
                     }
                 });
             }
-
             public class AdBridge {
                 @JavascriptInterface
                 public void showTopBanner() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (bannerContainer == null) {
-                                bannerContainer = new FrameLayout(MainActivity.this);
-                                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                                    Gravity.TOP | Gravity.CENTER_HORIZONTAL
-                                );
-                                startAppBanner = new Banner(MainActivity.this);
-                                bannerContainer.addView(startAppBanner, params);
-                                addContentView(bannerContainer, new ViewGroup.LayoutParams(
-                                    ViewGroup.LayoutParams.MATCH_PARENT,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT
-                                ));
-                                startAppBanner.loadAd();
-                            }
-                            bannerContainer.setVisibility(View.VISIBLE);
-                            startAppBanner.showBanner();
+                    runOnUiThread(() -> {
+                        if (bannerContainer == null) {
+                            bannerContainer = new FrameLayout(MainActivity.this);
+                            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+                            startAppBanner = new Banner(MainActivity.this);
+                            bannerContainer.addView(startAppBanner, params);
+                            addContentView(bannerContainer, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                            startAppBanner.loadAd();
                         }
+                        bannerContainer.setVisibility(View.VISIBLE);
+                        startAppBanner.showBanner();
                     });
                 }
-
                 @JavascriptInterface
                 public void hideTopBanner() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (bannerContainer != null) {
-                                bannerContainer.setVisibility(View.GONE);
-                            }
-                        }
-                    });
+                    runOnUiThread(() -> { if (bannerContainer != null) bannerContainer.setVisibility(View.GONE); });
                 }
-
                 @JavascriptInterface
                 public void showUnityAd() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (isUnityReady) {
-                                UnityAds.show(MainActivity.this, UNITY_PLACEMENT_ID, new UnityAdsShowOptions(), new IUnityAdsShowListener() {
-                                    @Override public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
-                                        triggerSaveInWeb();
-                                    }
-                                    @Override public void onUnityAdsShowStart(String placementId) {}
-                                    @Override public void onUnityAdsShowClick(String placementId) {}
-                                    @Override public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
-                                        isUnityReady = false;
-                                        loadUnityAd();
-                                        triggerSaveInWeb();
-                                    }
-                                });
-                            } else {
-                                Toast.makeText(MainActivity.this, "جاري تجهيز الإعلان...", Toast.LENGTH_SHORT).show();
-                                loadUnityAd();
-                                triggerSaveInWeb();
-                            }
+                    runOnUiThread(() -> {
+                        if (isUnityReady) {
+                            UnityAds.show(MainActivity.this, UNITY_PLACEMENT_ID, new UnityAdsShowOptions(), new IUnityAdsShowListener() {
+                                @Override public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) { triggerSaveInWeb(); }
+                                @Override public void onUnityAdsShowStart(String placementId) {}
+                                @Override public void onUnityAdsShowClick(String placementId) {}
+                                @Override public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
+                                    isUnityReady = false;
+                                    loadUnityAd();
+                                    triggerSaveInWeb();
+                                }
+                            });
+                        } else {
+                            Toast.makeText(MainActivity.this, "جاري تجهيز الإعلان...", Toast.LENGTH_SHORT).show();
+                            loadUnityAd();
+                            triggerSaveInWeb();
                         }
                     });
                 }
-
                 @JavascriptInterface
                 public void saveVideoFile(String base64Data, String fileName) {
                     try {
@@ -211,22 +159,20 @@ jobs:
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, "خطأ في الحفظ: " + e.getMessage(), Toast.LENGTH_LONG).show());
                     }
                 }
-
                 private void triggerSaveInWeb() {
                     final WebView webView = (WebView) appView.getEngine().getView();
-                    webView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            webView.evaluateJavascript("window.executeVideoSave();", null);
-                        }
-                    });
+                    webView.post(() -> webView.evaluateJavascript("window.executeVideoSave();", null));
                 }
             }
         }
         EOF
-
         cordova build android
 
     - name: Create Release and Upload APK
       uses: softprops/action-gh-release@v2
       with:
+        tag_name: v1.0.${{ github.run_number }}
+        name: AI Video W v1.0.${{ github.run_number }}
+        files: cordova_project/platforms/android/app/build/outputs/apk/**/*.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
