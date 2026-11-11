@@ -5,6 +5,10 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+# صلاحية إلزامية لإنشاء رابط تحميل عام في Releases
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,22 +17,16 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # 1. تهيئة بيئة Node.js بإصدار متوافق حديث لتخطي تحذير السيرفر
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 22
 
-    # 2. تحديث مكتبة الجافا إلى v5 المتوافقة كلياً مع Ubuntu الحديثة
     - name: Set up JDK 17
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'zulu'
         java-version: '17'
-
-    # 3. تثبيت أدوات أندرويد الأساسية (Android SDK) لبناء تطبيق حقيقي شغّال
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
 
     - name: Install Cordova
       run: npm install -g cordova
@@ -41,16 +39,11 @@ jobs:
         cp ../index.html www/
         cp ../script.js www/
         cp ../style.css www/
-        
-        # نسخ ملف config.xml المصلح الخاص بك من المستودع
         cp ../config.xml .
-        
         cordova platform add android
-        # البناء العادي لتفادي مشاكل توقيع النسخ على السيرفر وضمان خروج ملف الـ APK فوراً
         cordova build android
 
-    # 4. توليد الإصدار ورفع الـ APK لبناء الرابط العام المباشر للجميع دون تسجيل دخول
-    - name: Create Tag and Release Build
+    - name: Create Release and Upload APK
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v1.0.${{ github.run_number }}
