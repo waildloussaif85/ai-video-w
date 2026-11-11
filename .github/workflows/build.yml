@@ -81,27 +81,26 @@ jobs:
         public class MainActivity extends CordovaActivity {
             private Banner startAppBanner;
             private FrameLayout bannerContainer;
-            private String activeUnityPlacement = "Rewarded_Android";
+            private final String UNITY_GAME_ID = "800430370";
+            private final String UNITY_PLACEMENT_ID = "BP_Interstitial_Android";
             private boolean isUnityReady = false;
 
             @Override
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 
-                // 1. تفعيل الإعلانات الحقيقية في Start.io
+                // تهيئة Start.io
                 StartAppSDK.init(this, "210770048", false);
                 StartAppAd.disableSplash();
 
-                // 2. تهيئة Unity Ads (ضع false لتشغيل الإعلانات الحقيقية بعد التأكد من ظهورها)
-                UnityAds.initialize(getApplicationContext(), "800430370", true, new IUnityAdsInitializationListener() {
+                // تهيئة Unity Ads برقمك واسم الوحدة الصحيح من صورتك
+                UnityAds.initialize(getApplicationContext(), UNITY_GAME_ID, false, new IUnityAdsInitializationListener() {
                     @Override
                     public void onInitializationComplete() {
-                        loadUnityAd("Rewarded_Android");
+                        loadUnityAd();
                     }
                     @Override
-                    public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Error: " + message, Toast.LENGTH_LONG).show());
-                    }
+                    public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {}
                 });
 
                 loadUrl(launchUrl);
@@ -113,23 +112,15 @@ jobs:
                 }
             }
 
-            private void loadUnityAd(final String placement) {
-                UnityAds.load(placement, new IUnityAdsLoadListener() {
+            private void loadUnityAd() {
+                UnityAds.load(UNITY_PLACEMENT_ID, new IUnityAdsLoadListener() {
                     @Override
                     public void onUnityAdsAdLoaded(String placementId) {
-                        activeUnityPlacement = placementId;
                         isUnityReady = true;
                     }
                     @Override
                     public void onUnityAdsFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {
-                        // إذا فشل الاسم الأول، يجرب النظام الاسم البديل تلقائياً
-                        if (placement.equals("Rewarded_Android")) {
-                            loadUnityAd("Interstitial_Android");
-                        } else if (placement.equals("Interstitial_Android")) {
-                            loadUnityAd("fd6faa46-ba0e-46b8-b3db-a7f456ee0b01");
-                        } else {
-                            runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Load Fail: " + message, Toast.LENGTH_LONG).show());
-                        }
+                        isUnityReady = false;
                     }
                 });
             }
@@ -179,7 +170,7 @@ jobs:
                         @Override
                         public void run() {
                             if (isUnityReady) {
-                                UnityAds.show(MainActivity.this, activeUnityPlacement, new UnityAdsShowOptions(), new IUnityAdsShowListener() {
+                                UnityAds.show(MainActivity.this, UNITY_PLACEMENT_ID, new UnityAdsShowOptions(), new IUnityAdsShowListener() {
                                     @Override public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
                                         triggerSaveInWeb();
                                     }
@@ -187,7 +178,7 @@ jobs:
                                     @Override public void onUnityAdsShowClick(String placementId) {}
                                     @Override public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
                                         isUnityReady = false;
-                                        loadUnityAd(activeUnityPlacement);
+                                        loadUnityAd();
                                         triggerSaveInWeb();
                                     }
                                 });
@@ -209,7 +200,7 @@ jobs:
                         FileOutputStream fos = new FileOutputStream(videoFile);
                         fos.write(videoBytes);
                         fos.close();
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "تم حفظ الفيديو بنجاح في Downloads ✅", Toast.LENGTH_LONG).show());
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "تم حفظ الفيديو في Downloads ✅", Toast.LENGTH_LONG).show());
                     } catch (Exception e) {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, "خطأ في الحفظ: " + e.getMessage(), Toast.LENGTH_LONG).show());
                     }
@@ -221,3 +212,20 @@ jobs:
                         @Override
                         public void run() {
                             webView.evaluateJavascript("window.executeVideoSave();", null);
+                        }
+                    });
+                }
+            }
+        }
+        EOF
+
+        cordova build android
+
+    - name: Create Release and Upload APK
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v1.0.${{ github.run_number }}
+        name: AI Video W v1.0.${{ github.run_number }}
+        files: cordova_project/platforms/android/app/build/outputs/apk/**/*.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
