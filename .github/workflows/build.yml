@@ -41,9 +41,8 @@ jobs:
         cp ../config.xml .
         cordova platform add android
         
-        IS_URL="https://is.com"
-        ST_URL="https://startapp.com"
-        printf "repositories {\n mavenCentral()\n google()\n maven { url '${ST_URL}' }\n maven { url '${IS_URL}' }\n}\ndependencies {\n implementation 'com.ironsource.sdk:mediationsdk:8.4.0'\n implementation 'com.ironsource.adapters:unityadsadapter:4.3.42'\n implementation 'com.unity3d.ads:unity-ads:4.12.2'\n implementation 'com.startapp:inapp-sdk:5.0.2'\n}\n" > platforms/android/app/build-extras.gradle
+        # استخدام مستودع جوجل المركزي لمكتبات Unity LevelPlay الحديثة لتفادي اختصار الروابط
+        printf "repositories {\n mavenCentral()\n google()\n}\ndependencies {\n implementation 'com.unity3d.ads-mediation:mediation-sdk:8.5.0'\n implementation 'com.unity3d.ads-mediation:unityads-adapter:4.3.44'\n implementation 'com.unity3d.ads:unity-ads:4.12.3'\n implementation 'com.startapp:inapp-sdk:5.0.2'\n}\n" > platforms/android/app/build-extras.gradle
 
         cat << 'EOF' > platforms/android/app/src/main/java/com/waildloussa/aivideow/MainActivity.java
         package com.waildloussa.aivideow;
