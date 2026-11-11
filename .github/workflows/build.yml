@@ -87,26 +87,21 @@ jobs:
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 
-                // تهيئة Start.io مع تفعيل إعلانات الاختبار لتظهر فوراً
                 StartAppSDK.init(this, "210770048", false);
                 StartAppSDK.setTestAdsEnabled(true);
                 StartAppAd.disableSplash();
 
-                // تهيئة Unity Ads مع تفعيل وضع الاختبار (true) لتظهر فوراً
                 UnityAds.initialize(getApplicationContext(), "800430370", true, new IUnityAdsInitializationListener() {
                     @Override
                     public void onInitializationComplete() {
                         loadUnityRewarded();
                     }
                     @Override
-                    public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Init Error: " + message, Toast.LENGTH_SHORT).show());
-                    }
+                    public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {}
                 });
 
                 loadUrl(launchUrl);
 
-                // ربط الجسر البرمجي بشكل متوافق مع محرك Cordova الحديث
                 if (appView != null && appView.getEngine() != null) {
                     WebView webView = (WebView) appView.getEngine().getView();
                     webView.getSettings().setJavaScriptEnabled(true);
@@ -230,3 +225,6 @@ jobs:
       with:
         tag_name: v1.0.${{ github.run_number }}
         name: AI Video W v1.0.${{ github.run_number }}
+        files: cordova_project/platforms/android/app/build/outputs/apk/**/*.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
