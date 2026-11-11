@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Video App</title>
-    <link rel="stylesheet" href="style.css?v=6000">
+    <link rel="stylesheet" href="style.css?v=8000">
     <style>
         body, html {
             margin: 0;
@@ -15,6 +15,8 @@
         #welcome-screen { display: block; }
         #main-app-screen { display: none; }
         #video-output-screen { display: none; }
+        
+        /* مساحة الباند العلوية المحجوزة لإعلان Start.io لكي لا يغطي على التصميم */
         .ad-header-wrapper {
             width: 100%;
             height: 60px;
@@ -48,7 +50,9 @@
 
     <!-- 2. الواجهة الرئيسية (صفحة الإعدادات والميديا) -->
     <div id="main-app-screen" class="screen">
+        <!-- هذه المساحة الفارغة سيملؤها إعلان Start.io العلوي -->
         <div class="ad-header-wrapper"></div>
+        
         <div class="app-card">
             <h1 class="main-title">ai video w</h1>
             <p class="sub-header">Ultimate AI Video Generator</p>
@@ -98,7 +102,6 @@
                 <div class="color-picker-item"><input type="color" id="neon-color-picker" value="#ff007f"><label for="neon-color-picker">Neon Glow</label></div>
             </div>
 
-            <!-- أزرار الاختيار native لفتح ملفات الذاكرة بشكل سليم دون تجمد -->
             <div class="row button-row" style="display: flex; gap: 10px; justify-content: center;">
                 <button type="button" class="upload-btn" onclick="document.getElementById('image-input').click();">Upload Images 📸</button>
                 <button type="button" class="upload-btn" onclick="document.getElementById('music-input').click();">Upload Music 🎵</button>
@@ -120,25 +123,20 @@
             </div>
             <div class="action-buttons-row">
                 <a id="download-btn" class="app-btn download-btn" style="display: none;">Download Video 📥</a>
-                <button id="back-btn" class="app-btn back-btn" onclick="hideTopBanner();">Back ↩️</button>
+                <button id="back-btn" class="app-btn back-btn">Back ↩️</button>
             </div>
         </div>
     </div>
 
-    <!-- استدعاء مكاتب الهاتف الأصلية قبل الكود البرمجي -->
     <script src="cordova.js"></script>
-    <script src="script.js?v=6000"></script>
+    <script src="script.js?v=8000"></script>
 
     <script type="text/javascript">
         function showTopBanner() {
-            if (typeof startapp !== 'undefined') { startapp.showBanner(); }
-        }
-        function hideTopBanner() {
-            if (typeof startapp !== 'undefined') { startapp.hideBanner(); }
-            document.getElementById('video-output-screen').style.display='none'; 
-            document.getElementById('welcome-screen').style.display='block';
+            if (typeof AndroidAds !== 'undefined') { 
+                AndroidAds.showTopBanner(); 
+            }
         }
     </script>
 </body>
 </html>
-
