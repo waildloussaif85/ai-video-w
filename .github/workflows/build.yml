@@ -40,7 +40,7 @@ jobs:
         cp ../style.css www/
         cp ../config.xml .
         cordova platform add android
-        printf "repositories {\n mavenCentral()\n google()\n maven { url 'https://startapp.com' }\n}\ndependencies {\n implementation 'com.unity3d.ads:unity-ads:4.12.0'\n implementation 'com.startapp:inapp-sdk:5.0.2'\n}\n" > platforms/android/app/build-extras.gradle
+        printf "repositories {\n mavenCentral()\n google()\n maven { url 'https://startapp.com' }\n maven { url 'https://is.com' }\n}\ndependencies {\n implementation 'com.ironsource.sdk:mediationsdk:8.4.0'\n implementation 'com.ironsource.adapters:unityadsadapter:4.3.42'\n implementation 'com.unity3d.ads:unity-ads:4.12.2'\n implementation 'com.startapp:inapp-sdk:5.0.2'\n}\n" > platforms/android/app/build-extras.gradle
         cat << 'EOF' > platforms/android/app/src/main/java/com/waildloussa/aivideow/MainActivity.java
         package com.waildloussa.aivideow;
         import android.os.Bundle;
@@ -59,17 +59,16 @@ jobs:
         import com.startapp.sdk.ads.banner.Banner;
         import com.startapp.sdk.adsbase.StartAppAd;
         import com.startapp.sdk.adsbase.StartAppSDK;
-        import com.unity3d.ads.IUnityAdsInitializationListener;
-        import com.unity3d.ads.IUnityAdsLoadListener;
-        import com.unity3d.ads.IUnityAdsShowListener;
-        import com.unity3d.ads.UnityAds;
-        import com.unity3d.ads.UnityAdsShowOptions;
+        import com.ironsource.mediationsdk.IronSource;
+        import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo;
+        import com.ironsource.mediationsdk.logger.IronSourceError;
+        import com.ironsource.mediationsdk.model.Placement;
+        import com.ironsource.mediationsdk.sdk.LevelPlayRewardedVideoListener;
+
         public class MainActivity extends CordovaActivity {
             private Banner startAppBanner;
             private FrameLayout bannerContainer;
-            private final String UNITY_GAME_ID = "800430370";
-            private final String UNITY_PLACEMENT_ID = "Rewarded_Android";
-            private boolean isUnityReady = false;
+            private final String LEVELPLAY_APP_KEY = "2979d4965";
 
             @Override
             public void onCreate(Bundle savedInstanceState) {
@@ -78,16 +77,21 @@ jobs:
                 StartAppSDK.setTestAdsEnabled(true);
                 StartAppAd.disableSplash();
 
-                UnityAds.initialize(this, UNITY_GAME_ID, true, new IUnityAdsInitializationListener() {
-                    @Override
-                    public void onInitializationComplete() {
-                        loadUnityAd(false);
+                IronSource.setLevelPlayRewardedVideoListener(new LevelPlayRewardedVideoListener() {
+                    @Override public void onAdAvailable(AdInfo adInfo) {}
+                    @Override public void onAdUnavailable() {}
+                    @Override public void onAdOpened(AdInfo adInfo) {}
+                    @Override public void onAdShowFailed(IronSourceError error, AdInfo adInfo) {
+                        triggerSaveInWeb();
                     }
-                    @Override
-                    public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Init Fail: " + message, Toast.LENGTH_LONG).show());
+                    @Override public void onAdClicked(Placement placement, AdInfo adInfo) {}
+                    @Override public void onAdRewarded(Placement placement, AdInfo adInfo) {}
+                    @Override public void onAdClosed(AdInfo adInfo) {
+                        triggerSaveInWeb();
                     }
                 });
+
+                IronSource.init(this, LEVELPLAY_APP_KEY);
 
                 loadUrl(launchUrl);
                 if (appView != null && appView.getEngine() != null) {
@@ -97,42 +101,16 @@ jobs:
                 }
             }
 
-            private void loadUnityAd(final boolean showImmediately) {
-                UnityAds.load(UNITY_PLACEMENT_ID, new IUnityAdsLoadListener() {
-                    @Override
-                    public void onUnityAdsAdLoaded(String placementId) {
-                        isUnityReady = true;
-                        if (showImmediately) {
-                            displayUnityNow();
-                        }
-                    }
-                    @Override
-                    public void onUnityAdsFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {
-                        isUnityReady = false;
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Load Fail: " + message, Toast.LENGTH_LONG).show());
-                        if (showImmediately) {
-                            triggerSaveInWeb();
-                        }
-                    }
-                });
+            @Override
+            protected void onResume() {
+                super.onResume();
+                IronSource.onResume(this);
             }
 
-            private void displayUnityNow() {
-                runOnUiThread(() -> {
-                    UnityAds.show(MainActivity.this, UNITY_PLACEMENT_ID, new UnityAdsShowOptions(), new IUnityAdsShowListener() {
-                        @Override public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
-                            runOnUiThread(() -> Toast.makeText(MainActivity.this, "Unity Show Fail: " + message, Toast.LENGTH_LONG).show());
-                            triggerSaveInWeb();
-                        }
-                        @Override public void onUnityAdsShowStart(String placementId) {}
-                        @Override public void onUnityAdsShowClick(String placementId) {}
-                        @Override public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
-                            isUnityReady = false;
-                            loadUnityAd(false);
-                            triggerSaveInWeb();
-                        }
-                    });
-                });
+            @Override
+            protected void onPause() {
+                super.onPause();
+                IronSource.onPause(this);
             }
 
             private void triggerSaveInWeb() {
@@ -165,11 +143,11 @@ jobs:
                 @JavascriptInterface
                 public void showUnityAd() {
                     runOnUiThread(() -> {
-                        if (isUnityReady) {
-                            displayUnityNow();
+                        if (IronSource.isRewardedVideoAvailable()) {
+                            IronSource.showRewardedVideo();
                         } else {
-                            Toast.makeText(MainActivity.this, "جاري جلب إعلان Unity...", Toast.LENGTH_SHORT).show();
-                            loadUnityAd(true);
+                            Toast.makeText(MainActivity.this, "جاري تجهيز الإعلان، سيتم الحفظ...", Toast.LENGTH_SHORT).show();
+                            triggerSaveInWeb();
                         }
                     });
                 }
