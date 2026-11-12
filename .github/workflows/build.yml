@@ -69,7 +69,7 @@ jobs:
             @Override
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
-                StartAppSDK.init(this, "210770048", false);
+                StartAppSDK.init(this, "210703852", false);
                 StartAppAd.disableSplash();
                 videoAd = new StartAppAd(this);
                 loadRewardedAd();
