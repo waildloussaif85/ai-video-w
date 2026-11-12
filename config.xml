@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.waildloussa.aivideow" version="1.0.0" xmlns="http://w3.org" xmlns:android="http://android.com">
+<widget id="com.waildloussa.aivideow" version="1.0.1" xmlns="http://w3.org" xmlns:android="http://android.com">
     <name>AI Video W</name>
     <description>Create TikToks and Reels in Seconds</description>
     <author email="waildloussa@example.com" href="https://github.com">Wail Dloussa</author>
