@@ -57,7 +57,6 @@ jobs:
         import java.io.FileOutputStream;
         import org.apache.cordova.*;
         import com.startapp.sdk.ads.banner.Banner;
-        import com.startapp.sdk.ads.banner.BannerListener;
         import com.startapp.sdk.adsbase.Ad;
         import com.startapp.sdk.adsbase.StartAppAd;
         import com.startapp.sdk.adsbase.StartAppSDK;
@@ -71,7 +70,6 @@ jobs:
             public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 StartAppSDK.init(this, "210703852", false);
-                StartAppSDK.setTestAdsEnabled(true);
                 StartAppAd.disableSplash();
                 videoAd = new StartAppAd(this);
                 loadRewardedAd();
@@ -85,12 +83,8 @@ jobs:
             }
             private void loadRewardedAd() {
                 videoAd.loadAd(StartAppAd.AdMode.REWARDED_VIDEO, new AdEventListener() {
-                    @Override public void onReceiveAd(Ad ad) {
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "إعلان الفيديو جاهز ✅", Toast.LENGTH_SHORT).show());
-                    }
-                    @Override public void onFailedToReceiveAd(Ad ad) {
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "فشل تحميل الفيديو: " + ad.getErrorMessage(), Toast.LENGTH_LONG).show());
-                    }
+                    @Override public void onReceiveAd(Ad ad) {}
+                    @Override public void onFailedToReceiveAd(Ad ad) {}
                 });
             }
             private void triggerSaveInWeb() {
@@ -104,16 +98,7 @@ jobs:
                         if (bannerContainer == null) {
                             bannerContainer = new FrameLayout(MainActivity.this);
                             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-                            startAppBanner = new Banner(MainActivity.this, new BannerListener() {
-                                @Override public void onReceiveAd(View banner) {
-                                    Toast.makeText(MainActivity.this, "تم تحميل البانر ✅", Toast.LENGTH_SHORT).show();
-                                }
-                                @Override public void onFailedToReceiveAd(View banner) {
-                                    Toast.makeText(MainActivity.this, "فشل تحميل البانر ❌", Toast.LENGTH_LONG).show();
-                                }
-                                @Override public void onImpression(View banner) {}
-                                @Override public void onClick(View banner) {}
-                            });
+                            startAppBanner = new Banner(MainActivity.this);
                             bannerContainer.addView(startAppBanner, params);
                             addContentView(bannerContainer, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         }
@@ -144,7 +129,6 @@ jobs:
                             @Override public void adDisplayed(Ad ad) {}
                             @Override public void adClicked(Ad ad) {}
                             @Override public void adNotDisplayed(Ad ad) {
-                                Toast.makeText(MainActivity.this, "لم يعرض الفيديو: " + ad.getErrorMessage(), Toast.LENGTH_LONG).show();
                                 loadRewardedAd();
                                 triggerSaveInWeb();
                             }
