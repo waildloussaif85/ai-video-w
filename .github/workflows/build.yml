@@ -73,12 +73,13 @@ jobs:
                 StartAppAd.disableSplash();
                 videoAd = new StartAppAd(this);
                 loadRewardedAd();
-                loadUrl(launchUrl);
+                super.init();
                 if (appView != null && appView.getEngine() != null) {
                     WebView webView = (WebView) appView.getEngine().getView();
                     webView.getSettings().setJavaScriptEnabled(true);
                     webView.addJavascriptInterface(new AdBridge(), "AndroidAds");
                 }
+                loadUrl(launchUrl);
             }
             private void loadRewardedAd() {
                 videoAd.loadAd(StartAppAd.AdMode.REWARDED_VIDEO, new AdEventListener() {
@@ -100,15 +101,21 @@ jobs:
                             startAppBanner = new Banner(MainActivity.this);
                             bannerContainer.addView(startAppBanner, params);
                             addContentView(bannerContainer, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                            startAppBanner.loadAd();
                         }
                         bannerContainer.setVisibility(View.VISIBLE);
+                        startAppBanner.loadAd();
                         startAppBanner.showBanner();
+                        WebView webView = (WebView) appView.getEngine().getView();
+                        webView.evaluateJavascript("document.body.style.paddingTop = '65px';", null);
                     });
                 }
                 @JavascriptInterface
                 public void hideTopBanner() {
-                    runOnUiThread(() -> { if (bannerContainer != null) bannerContainer.setVisibility(View.GONE); });
+                    runOnUiThread(() -> {
+                        if (bannerContainer != null) bannerContainer.setVisibility(View.GONE);
+                        WebView webView = (WebView) appView.getEngine().getView();
+                        webView.evaluateJavascript("document.body.style.paddingTop = '0px';", null);
+                    });
                 }
                 @JavascriptInterface
                 public void showUnityAd() {
