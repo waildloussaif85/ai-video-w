@@ -27,7 +27,7 @@ jobs:
         distribution: 'zulu'
         java-version: '17'
 
-    - name: Create and Save Keystore Automatically
+    - name: Create and Save Keystore Automatically (If not exists)
       run: |
         if [ ! -f my-release-key.jks ]; then
           keytool -genkey -v -keystore my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias mykey -storepass 123456 -keypass 123456 -dname "CN=Wail, OU=Dev, O=App, L=Tunis, ST=Tunis, C=TN"
