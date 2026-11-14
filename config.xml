@@ -11,12 +11,9 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="market:*" />
-
-    <!-- إعدادات منصة الأندرويد للوصول إلى الصور والموسيقى والتوافق الحديث -->
+    
+    <!-- إعدادات منصة الأندرويد -->
     <platform name="android">
         <preference name="AndroidXEnabled" value="true" />
-        <preference name="AndroidInsecureFileModeEnabled" value="true" />
     </platform>
-
-    <preference name="Orientation" value="portrait" />
 </widget>
