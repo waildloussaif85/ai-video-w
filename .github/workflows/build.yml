@@ -166,7 +166,7 @@ jobs:
             }
         }
         EOF
-        cordova build android --release -- --keystore=../my-release-key.jks --storePassword=123456 --alias=mykey --password=123456
+        cordova build android --release -- --packageType=apk --keystore=../my-release-key.jks --storePassword=123456 --alias=mykey --password=123456
         cd ..
         mkdir -p final_apk
         find cordova_project/platforms/android/app/build/outputs/apk/ -name "*.apk" -exec cp {} final_apk/ \;
