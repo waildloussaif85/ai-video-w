@@ -1,7 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.waildloussa.aivideow.v2" version="1.0.0" android-versionCode="1" xmlns="http://w3.org" xmlns:cdv="http://apache.org">
 
-
     <name>AI Video W</name>
     <description>Create TikToks and Reels in Seconds</description>
     <author email="waildloussa@example.com" href="https://github.com">Wail Dloussa</author>
