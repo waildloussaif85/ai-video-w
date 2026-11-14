@@ -167,12 +167,15 @@ jobs:
         }
         EOF
         cordova build android --release -- --keystore=../my-release-key.jks --storePassword=123456 --alias=mykey --password=123456
+        cd ..
+        mkdir -p final_apk
+        find cordova_project/platforms/android/app/build/outputs/apk/ -name "*.apk" -exec cp {} final_apk/ \;
 
     - name: Create Release and Upload APK
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v1.0.${{ github.run_number }}
         name: AI Video W v1.0.${{ github.run_number }}
-        files: cordova_project/platforms/android/app/build/outputs/apk/**/*.apk
+        files: final_apk/*.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
