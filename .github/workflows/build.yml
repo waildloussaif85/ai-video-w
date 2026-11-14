@@ -27,12 +27,23 @@ jobs:
         distribution: 'zulu'
         java-version: '17'
 
+    - name: Create and Save Keystore Automatically
+      run: |
+        if [ ! -f my-release-key.jks ]; then
+          keytool -genkey -v -keystore my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias mykey -storepass 123456 -keypass 123456 -dname "CN=Wail, OU=Dev, O=App, L=Tunis, ST=Tunis, C=TN"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@://github.com"
+          git add my-release-key.jks
+          git commit -m "Save permanent signing key"
+          git push
+        fi
+
     - name: Install Cordova
       run: npm install -g cordova
 
-    - name: Create and Build Project
+    - name: Create, Build and Sign Project
       run: |
-        cordova create cordova_project com.waildloussa.aivideow "AI Video W"
+        cordova create cordova_project com.waildloussa.aivideow.v2 "AI Video W"
         cd cordova_project
         rm -rf www/*
         cp ../index.html www/
@@ -41,8 +52,9 @@ jobs:
         cp ../config.xml .
         cordova platform add android
         printf "repositories {\n mavenCentral()\n google()\n}\ndependencies {\n implementation 'com.startapp:inapp-sdk:5.0.2'\n}\n" > platforms/android/app/build-extras.gradle
-        cat << 'EOF' > platforms/android/app/src/main/java/com/waildloussa/aivideow/MainActivity.java
-        package com.waildloussa.aivideow;
+        mkdir -p platforms/android/app/src/main/java/com/waildloussa/aivideow/v2
+        cat << 'EOF' > platforms/android/app/src/main/java/com/waildloussa/aivideow/v2/MainActivity.java
+        package com.waildloussa.aivideow.v2;
         import android.os.Bundle;
         import android.os.Environment;
         import android.util.Base64;
@@ -154,13 +166,13 @@ jobs:
             }
         }
         EOF
-        cordova build android
+        cordova build android --release -- --keystore=../my-release-key.jks --storePassword=123456 --alias=mykey --password=123456
 
     - name: Create Release and Upload APK
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v1.0.${{ github.run_number }}
         name: AI Video W v1.0.${{ github.run_number }}
-        files: cordova_project/platforms/android/app/build/outputs/apk/**/*.apk
+        files: cordova_project/platforms/android/app/build/outputs/apk/release/app-release.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
